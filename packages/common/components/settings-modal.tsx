@@ -295,9 +295,10 @@ type AzureKeyFormState = {
     name: string;
     apiKey: string;
     endpoint: string;
+    deploymentName: string;
 };
 
-const EMPTY_FORM: AzureKeyFormState = { name: '', apiKey: '', endpoint: '' };
+const EMPTY_FORM: AzureKeyFormState = { name: '', apiKey: '', endpoint: '', deploymentName: '' };
 
 const getMaskedKey = (key: string) => {
     if (!key) return '';
@@ -321,19 +322,20 @@ export const ApiKeySettings = () => {
     const openEdit = (id: string) => {
         const key = keys.find(k => k.id === id);
         if (!key) return;
-        setForm({ name: key.name, apiKey: key.apiKey, endpoint: key.endpoint });
+        setForm({ name: key.name, apiKey: key.apiKey, endpoint: key.endpoint, deploymentName: key.deploymentName || '' });
         setEditingId(id);
     };
 
     const handleSave = () => {
-        if (!form.name.trim() || !form.apiKey.trim()) return;
+        if (!form.name.trim() || !form.apiKey.trim() || !form.deploymentName.trim()) return;
         if (editingId === 'new') {
-            addKey(form.name.trim(), form.apiKey.trim(), form.endpoint.trim());
+            addKey(form.name.trim(), form.apiKey.trim(), form.endpoint.trim(), form.deploymentName.trim());
         } else if (editingId) {
             updateKey(editingId, {
                 name: form.name.trim(),
                 apiKey: form.apiKey.trim(),
                 endpoint: form.endpoint.trim(),
+                deploymentName: form.deploymentName.trim(),
             });
         }
         setEditingId(null);
@@ -388,8 +390,16 @@ export const ApiKeySettings = () => {
                                             placeholder="https://jouw-resource.openai.azure.com/"
                                         />
                                     </div>
+                                    <div className="flex flex-col gap-1.5">
+                                        <label className="text-xs font-medium">Deployment-naam</label>
+                                        <Input
+                                            value={form.deploymentName}
+                                            onChange={e => setForm(f => ({ ...f, deploymentName: e.target.value }))}
+                                            placeholder="bijv. gpt-4o"
+                                        />
+                                    </div>
                                     <div className="flex gap-2">
-                                        <Button size="sm" onClick={handleSave} disabled={!form.name.trim() || !form.apiKey.trim()}>
+                                        <Button size="sm" onClick={handleSave} disabled={!form.name.trim() || !form.apiKey.trim() || !form.deploymentName.trim()}>
                                             Opslaan
                                         </Button>
                                         <Button size="sm" variant="bordered" onClick={handleCancel}>
@@ -452,8 +462,16 @@ export const ApiKeySettings = () => {
                             placeholder="https://jouw-resource.openai.azure.com/"
                         />
                     </div>
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-xs font-medium">Deployment-naam</label>
+                        <Input
+                            value={form.deploymentName}
+                            onChange={e => setForm(f => ({ ...f, deploymentName: e.target.value }))}
+                            placeholder="bijv. gpt-4o"
+                        />
+                    </div>
                     <div className="flex gap-2">
-                        <Button size="sm" onClick={handleSave} disabled={!form.name.trim() || !form.apiKey.trim()}>
+                        <Button size="sm" onClick={handleSave} disabled={!form.name.trim() || !form.apiKey.trim() || !form.deploymentName.trim()}>
                             Sleutel toevoegen
                         </Button>
                         <Button size="sm" variant="bordered" onClick={handleCancel}>

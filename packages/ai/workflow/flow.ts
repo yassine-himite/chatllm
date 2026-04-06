@@ -104,6 +104,9 @@ export type WorkflowContextSchema = {
     showSuggestions: boolean;
     customInstructions?: string;
     onFinish: (data: any) => void;
+    azureApiKey?: string;
+    azureEndpoint?: string;
+    azureDeploymentName?: string;
 };
 
 export const runWorkflow = ({
@@ -120,6 +123,9 @@ export const runWorkflow = ({
     onFinish,
     customInstructions,
     gl,
+    azureApiKey,
+    azureEndpoint,
+    azureDeploymentName,
 }: {
     mcpConfig: Record<string, string>;
     mode: ChatMode;
@@ -134,6 +140,9 @@ export const runWorkflow = ({
     onFinish?: (data: any) => void;
     gl?: Geo;
     customInstructions?: string;
+    azureApiKey?: string;
+    azureEndpoint?: string;
+    azureDeploymentName?: string;
 }) => {
     const langfuse = new Langfuse();
     const trace = langfuse.trace({
@@ -186,6 +195,9 @@ export const runWorkflow = ({
         threadItemId,
         showSuggestions,
         onFinish: onFinish as any,
+        azureApiKey,
+        azureEndpoint,
+        azureDeploymentName,
     });
 
     // Use the typed builder

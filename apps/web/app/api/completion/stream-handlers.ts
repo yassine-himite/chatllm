@@ -83,6 +83,9 @@ export async function executeStream({
             mcpConfig: data.mcpConfig || {},
             showSuggestions: data.showSuggestions || false,
             onFinish: onFinish,
+            azureApiKey: data.azureApiKey,
+            azureEndpoint: data.azureEndpoint,
+            azureDeploymentName: data.azureDeploymentName,
         });
 
         workflow.onAll((event, payload) => {

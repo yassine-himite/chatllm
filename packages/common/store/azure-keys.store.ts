@@ -6,12 +6,13 @@ export type AzureApiKey = {
     name: string;
     apiKey: string;
     endpoint: string;
+    deploymentName: string;
 };
 
 type AzureKeysState = {
     keys: AzureApiKey[];
     selectedKeyId: string | null;
-    addKey: (name: string, apiKey: string, endpoint: string) => void;
+    addKey: (name: string, apiKey: string, endpoint: string, deploymentName: string) => void;
     updateKey: (id: string, updates: Partial<Omit<AzureApiKey, 'id'>>) => void;
     removeKey: (id: string) => void;
     setSelectedKeyId: (id: string | null) => void;
@@ -24,10 +25,10 @@ export const useAzureKeysStore = create<AzureKeysState>()(
         (set, get) => ({
             keys: [],
             selectedKeyId: null,
-            addKey: (name, apiKey, endpoint) => {
+            addKey: (name, apiKey, endpoint, deploymentName) => {
                 const id = Math.random().toString(36).slice(2, 11);
                 set(state => ({
-                    keys: [...state.keys, { id, name, apiKey, endpoint }],
+                    keys: [...state.keys, { id, name, apiKey, endpoint, deploymentName }],
                     selectedKeyId: state.selectedKeyId ?? id,
                 }));
             },

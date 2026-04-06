@@ -13,6 +13,9 @@ export const completionRequestSchema = z.object({
     webSearch: z.boolean().optional(),
     showSuggestions: z.boolean().optional(),
     customInstructions: z.string().optional(),
+    azureApiKey: z.string().optional(),
+    azureEndpoint: z.string().optional(),
+    azureDeploymentName: z.string().optional(),
 });
 
 export type CompletionRequestType = z.infer<typeof completionRequestSchema>;

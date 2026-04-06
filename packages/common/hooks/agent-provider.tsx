@@ -6,7 +6,7 @@ import { buildCoreMessagesFromThreadItems, plausible } from '@repo/shared/utils'
 import { nanoid } from 'nanoid';
 import { useParams, useRouter } from 'next/navigation';
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo } from 'react';
-import { useApiKeysStore, useAppStore, useChatStore, useMcpToolsStore } from '../store';
+import { useApiKeysStore, useAppStore, useAzureKeysStore, useChatStore, useMcpToolsStore } from '../store';
 
 export type AgentContextType = {
     runAgent: (body: any) => Promise<void>;
@@ -57,6 +57,7 @@ export const AgentProvider = ({ children }: { children: ReactNode }) => {
     const getSelectedMCP = useMcpToolsStore(state => state.getSelectedMCP);
     const apiKeys = useApiKeysStore(state => state.getAllKeys);
     const hasApiKeyForChatMode = useApiKeysStore(state => state.hasApiKeyForChatMode);
+    const getSelectedAzureKey = useAzureKeysStore(state => state.getSelectedKey);
     const setShowSignInModal = useAppStore(state => state.setShowSignInModal);
 
     // Fetch remaining credits when user changes
@@ -424,8 +425,10 @@ export const AgentProvider = ({ children }: { children: ReactNode }) => {
                     apiKeys: apiKeys(),
                 });
             } else {
+                const resolvedMode = (newChatMode || chatMode) as ChatMode;
+                const azureKey = resolvedMode === ChatMode.AZURE_OPENAI ? getSelectedAzureKey() : undefined;
                 runAgent({
-                    mode: newChatMode || chatMode,
+                    mode: resolvedMode,
                     prompt: query,
                     threadId,
                     messages: coreMessages,
@@ -435,6 +438,11 @@ export const AgentProvider = ({ children }: { children: ReactNode }) => {
                     parentThreadItemId: '',
                     webSearch: useWebSearch,
                     showSuggestions: showSuggestions ?? true,
+                    ...(azureKey ? {
+                        azureApiKey: azureKey.apiKey,
+                        azureEndpoint: azureKey.endpoint,
+                        azureDeploymentName: azureKey.deploymentName,
+                    } : {}),
                 });
             }
         },
@@ -456,6 +464,7 @@ export const AgentProvider = ({ children }: { children: ReactNode }) => {
             hasApiKeyForChatMode,
             updateThreadItem,
             runAgent,
+            getSelectedAzureKey,
         ]
     );
 
