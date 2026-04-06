@@ -11,6 +11,7 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
     Flex,
 } from '@repo/ui';
@@ -304,22 +305,6 @@ export const Sidebar = () => {
                             <IconArrowBarRight size={16} strokeWidth={2} />
                         </Button>
                     )}
-                    {!isSidebarOpen && (
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            tooltip={theme === 'dark' ? 'Overschakelen naar lichte modus' : 'Overschakelen naar donkere modus'}
-                            tooltipSide="right"
-                            onClick={toggleTheme}
-                            className="mx-auto"
-                        >
-                            {theme === 'dark' ? (
-                                <IconSun size={16} strokeWidth={2} />
-                            ) : (
-                                <IconMoon size={16} strokeWidth={2} />
-                            )}
-                        </Button>
-                    )}
                     {isSignedIn && (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -372,6 +357,16 @@ export const Sidebar = () => {
                                         Profiel
                                     </DropdownMenuItem>
                                 )}
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={toggleTheme}>
+                                    {theme === 'dark' ? (
+                                        <IconSun size={16} strokeWidth={2} />
+                                    ) : (
+                                        <IconMoon size={16} strokeWidth={2} />
+                                    )}
+                                    {theme === 'dark' ? 'Lichte modus' : 'Donkere modus'}
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
                                 {isSignedIn && (
                                     <DropdownMenuItem onClick={() => signOut()}>
                                         <IconLogout size={16} strokeWidth={2} />
@@ -383,52 +378,20 @@ export const Sidebar = () => {
                     )}
                     {isSidebarOpen && !isSignedIn && (
                         <div className="flex w-full flex-col gap-1.5 p-1">
-                            <div className="flex w-full flex-row gap-1.5">
-                                <Button
-                                    variant="bordered"
-                                    size="sm"
-                                    rounded="lg"
-                                    className="flex-1"
-                                    onClick={() => {
-                                        setIsSettingsOpen(true);
-                                    }}
-                                >
-                                    <IconSettings2 size={14} strokeWidth={2} />
-                                    Instellingen
-                                </Button>
-                                <Button
-                                    variant="bordered"
-                                    size="sm"
-                                    rounded="lg"
-                                    tooltip={theme === 'dark' ? 'Overschakelen naar lichte modus' : 'Overschakelen naar donkere modus'}
-                                    onClick={toggleTheme}
-                                >
-                                    {theme === 'dark' ? (
-                                        <IconSun size={14} strokeWidth={2} />
-                                    ) : (
-                                        <IconMoon size={14} strokeWidth={2} />
-                                    )}
-                                </Button>
-                            </div>
+                            <Button
+                                variant="bordered"
+                                size="sm"
+                                rounded="lg"
+                                className="w-full"
+                                onClick={() => setIsSettingsOpen(true)}
+                            >
+                                <IconSettings2 size={14} strokeWidth={2} />
+                                Instellingen
+                            </Button>
                             <Button size="sm" rounded="lg" onClick={() => push('/sign-in')}>
                                 Inloggen / Registreren
                             </Button>
                         </div>
-                    )}
-                    {isSidebarOpen && isSignedIn && (
-                        <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            tooltip={theme === 'dark' ? 'Overschakelen naar lichte modus' : 'Overschakelen naar donkere modus'}
-                            onClick={toggleTheme}
-                            className="self-end mr-1"
-                        >
-                            {theme === 'dark' ? (
-                                <IconSun size={14} strokeWidth={2} />
-                            ) : (
-                                <IconMoon size={14} strokeWidth={2} />
-                            )}
-                        </Button>
                     )}
                 </Flex>
             </Flex>
