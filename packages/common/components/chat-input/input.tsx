@@ -259,7 +259,7 @@ export const ChatInput = ({
                     {!currentThreadId && showGreeting && <ExamplePrompts />}
 
                     {currentThreadId && (
-                        <p className="text-muted-foreground mt-1 w-full text-center text-[11px] opacity-50">
+                        <p className="text-muted-foreground mt-2 w-full text-center text-[11px] opacity-50">
                             Twelo.ai kan fouten maken. Controleer belangrijke informatie altijd.
                         </p>
                     )}
@@ -320,7 +320,8 @@ const AnimatedTitles = ({ titles = [], firstName = '' }: AnimatedTitlesProps) =>
                     }}
                     className="from-muted-foreground/50 via-muted-foreground/40 to-muted-foreground/20 bg-gradient-to-r bg-clip-text text-center text-[32px] font-semibold tracking-tight text-transparent"
                 >
-                    {greeting}{firstName ? ` ${firstName}` : ''}
+                    {greeting}
+                    {firstName ? ` ${firstName}` : ''}
                 </motion.h1>
             </AnimatePresence>
         </Flex>

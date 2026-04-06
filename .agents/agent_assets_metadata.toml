@@ -6,3 +6,9 @@ id = "ybF9kaGOEcrexDihtqtSS"
 uri = "file://twelo-ui-transfer.tar.gz"
 type = "unspecified"
 title = "twelo-ui-transfer.tar.gz — UI Transfer Package (56 KB)"
+
+[[outputs]]
+id = "P6otM5b_JSxazOmM7Uagb"
+uri = "file://twelo-ui-transfer.zip"
+type = "unspecified"
+title = "twelo-ui-transfer.zip — UI Transfer Package (322 KB)"
