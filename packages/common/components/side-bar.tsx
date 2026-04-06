@@ -159,7 +159,7 @@ export const Sidebar = () => {
                     {isSidebarOpen && (
                         <Button
                             variant="ghost"
-                            tooltip="Close Sidebar"
+                            tooltip="Zijbalk sluiten"
                             tooltipSide="right"
                             size="icon-sm"
                             onClick={() => setIsSidebarOpen(prev => !prev)}
@@ -183,12 +183,12 @@ export const Sidebar = () => {
                                 size={isSidebarOpen ? 'sm' : 'icon-sm'}
                                 variant="bordered"
                                 rounded="lg"
-                                tooltip={isSidebarOpen ? undefined : 'New Thread'}
+                                tooltip={isSidebarOpen ? undefined : 'Nieuw gesprek'}
                                 tooltipSide="right"
                                 className={cn(isSidebarOpen && 'relative w-full', 'justify-center')}
                             >
                                 <IconPlus size={16} strokeWidth={2} className={cn(isSidebarOpen)} />
-                                {isSidebarOpen && 'New'}
+                                {isSidebarOpen && 'Nieuw'}
                             </Button>
                         </Link>
                     ) : (
@@ -196,19 +196,19 @@ export const Sidebar = () => {
                             size={isSidebarOpen ? 'sm' : 'icon-sm'}
                             variant="bordered"
                             rounded="lg"
-                            tooltip={isSidebarOpen ? undefined : 'New Thread'}
+                            tooltip={isSidebarOpen ? undefined : 'Nieuw gesprek'}
                             tooltipSide="right"
                             className={cn(isSidebarOpen && 'relative w-full', 'justify-center')}
                         >
                             <IconPlus size={16} strokeWidth={2} className={cn(isSidebarOpen)} />
-                            {isSidebarOpen && 'New Thread'}
+                            {isSidebarOpen && 'Nieuw gesprek'}
                         </Button>
                     )}
                     <Button
                         size={isSidebarOpen ? 'sm' : 'icon-sm'}
                         variant="bordered"
                         rounded="lg"
-                        tooltip={isSidebarOpen ? undefined : 'Search'}
+                        tooltip={isSidebarOpen ? undefined : 'Zoeken'}
                         tooltipSide="right"
                         className={cn(
                             isSidebarOpen && 'relative w-full',
@@ -217,7 +217,7 @@ export const Sidebar = () => {
                         onClick={() => setIsCommandSearchOpen(true)}
                     >
                         <IconSearch size={14} strokeWidth={2} className={cn(isSidebarOpen)} />
-                        {isSidebarOpen && 'Search'}
+                        {isSidebarOpen && 'Zoeken'}
                         {isSidebarOpen && <div className="flex-1" />}
                         {isSidebarOpen && (
                             <div className="flex flex-row items-center gap-1">
@@ -259,7 +259,7 @@ export const Sidebar = () => {
                         )}
                     >
                         {renderGroup({
-                            title: 'Pinned',
+                            title: 'Vastgezet',
                             threads: threads
                                 .filter(thread => thread.pinned)
                                 .sort((a, b) => b.pinnedAt.getTime() - a.pinnedAt.getTime()),
@@ -267,17 +267,17 @@ export const Sidebar = () => {
                             renderEmptyState: () => (
                                 <div className="border-hard flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-2">
                                     <p className="text-muted-foreground text-xs opacity-50">
-                                        No pinned threads
+                                        Geen vastgezette gesprekken
                                     </p>
                                 </div>
                             ),
                         })}
-                        {renderGroup({ title: 'Today', threads: groupedThreads.today })}
-                        {renderGroup({ title: 'Yesterday', threads: groupedThreads.yesterday })}
-                        {renderGroup({ title: 'Last 7 Days', threads: groupedThreads.last7Days })}
-                        {renderGroup({ title: 'Last 30 Days', threads: groupedThreads.last30Days })}
+                        {renderGroup({ title: 'Vandaag', threads: groupedThreads.today })}
+                        {renderGroup({ title: 'Gisteren', threads: groupedThreads.yesterday })}
+                        {renderGroup({ title: 'Afgelopen 7 dagen', threads: groupedThreads.last7Days })}
+                        {renderGroup({ title: 'Afgelopen 30 dagen', threads: groupedThreads.last30Days })}
                         {renderGroup({
-                            title: 'Previous Months',
+                            title: 'Vorige maanden',
                             threads: groupedThreads.previousMonths,
                         })}
                     </Flex>
@@ -295,7 +295,7 @@ export const Sidebar = () => {
                         <Button
                             variant="ghost"
                             size="icon"
-                            tooltip="Open Sidebar"
+                            tooltip="Zijbalk openen"
                             tooltipSide="right"
                             onClick={() => setIsSidebarOpen(prev => !prev)}
                             className={cn(!isSidebarOpen && 'mx-auto')}
@@ -307,7 +307,7 @@ export const Sidebar = () => {
                         <Button
                             variant="ghost"
                             size="icon"
-                            tooltip={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                            tooltip={theme === 'dark' ? 'Overschakelen naar lichte modus' : 'Overschakelen naar donkere modus'}
                             tooltipSide="right"
                             onClick={toggleTheme}
                             className="mx-auto"
@@ -363,18 +363,18 @@ export const Sidebar = () => {
                             <DropdownMenuContent>
                                 <DropdownMenuItem onClick={() => setIsSettingsOpen(true)}>
                                     <IconSettings size={16} strokeWidth={2} />
-                                    Settings
+                                    Instellingen
                                 </DropdownMenuItem>
                                 {isSignedIn && (
                                     <DropdownMenuItem onClick={() => openUserProfile()}>
                                         <IconUser size={16} strokeWidth={2} />
-                                        Profile
+                                        Profiel
                                     </DropdownMenuItem>
                                 )}
                                 {isSignedIn && (
                                     <DropdownMenuItem onClick={() => signOut()}>
                                         <IconLogout size={16} strokeWidth={2} />
-                                        Logout
+                                        Uitloggen
                                     </DropdownMenuItem>
                                 )}
                             </DropdownMenuContent>
@@ -393,13 +393,13 @@ export const Sidebar = () => {
                                     }}
                                 >
                                     <IconSettings2 size={14} strokeWidth={2} />
-                                    Settings
+                                    Instellingen
                                 </Button>
                                 <Button
                                     variant="bordered"
                                     size="sm"
                                     rounded="lg"
-                                    tooltip={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                                    tooltip={theme === 'dark' ? 'Overschakelen naar lichte modus' : 'Overschakelen naar donkere modus'}
                                     onClick={toggleTheme}
                                 >
                                     {theme === 'dark' ? (
@@ -410,7 +410,7 @@ export const Sidebar = () => {
                                 </Button>
                             </div>
                             <Button size="sm" rounded="lg" onClick={() => push('/sign-in')}>
-                                Log in / Sign up
+                                Inloggen / Registreren
                             </Button>
                         </div>
                     )}
@@ -418,7 +418,7 @@ export const Sidebar = () => {
                         <Button
                             variant="ghost"
                             size="icon-sm"
-                            tooltip={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                            tooltip={theme === 'dark' ? 'Overschakelen naar lichte modus' : 'Overschakelen naar donkere modus'}
                             onClick={toggleTheme}
                             className="self-end mr-1"
                         >

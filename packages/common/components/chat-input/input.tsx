@@ -34,7 +34,7 @@ export const ChatInput = ({
 
     const { threadId: currentThreadId } = useParams();
     const { editor } = useChatEditor({
-        placeholder: isFollowUp ? 'Ask follow up' : 'Ask anything',
+        placeholder: isFollowUp ? 'Stel een vervolgvraag' : 'Vraag maar raak',
         onInit: ({ editor }) => {
             if (typeof window !== 'undefined' && !isFollowUp && !isSignedIn) {
                 const draftMessage = window.localStorage.getItem('draft-message');
@@ -190,7 +190,7 @@ export const ChatInput = ({
                                     exit={{ opacity: 0 }}
                                     transition={{ duration: 0.15 }}
                                 >
-                                    <div className="animate-pulse">Loading editor...</div>
+                                    <div className="animate-pulse">Editor laden...</div>
                                 </motion.div>
                             )}
                         </motion.div>
@@ -269,11 +269,11 @@ const AnimatedTitles = ({ titles = [] }: AnimatedTitlesProps) => {
             const hour = new Date().getHours();
 
             if (hour >= 5 && hour < 12) {
-                return 'Good morning';
+                return 'Goedemorgen';
             } else if (hour >= 12 && hour < 18) {
-                return 'Good afternoon';
+                return 'Goedemiddag';
             } else {
-                return 'Good evening';
+                return 'Goedenavond';
             }
         };
 

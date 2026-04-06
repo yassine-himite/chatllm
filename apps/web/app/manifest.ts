@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
         name: 'twelo.ai',
         short_name: 'twelo.ai',
         description:
-            'twelo.ai is a modern AI chat client that allows you to chat with AI in a more intuitive way.',
+            'twelo.ai is een moderne AI-chatclient waarmee je op een intuïtievere manier met AI kunt chatten.',
         start_url: '/',
         display: 'standalone',
         background_color: 'hsl(60 20% 99%)',

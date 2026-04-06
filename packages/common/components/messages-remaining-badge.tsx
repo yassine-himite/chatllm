@@ -30,9 +30,9 @@ export function MessagesRemainingBadge() {
             >
                 <div className="text-muted-foreground/50 text-xs">
                     {creditLimit.remaining === 0
-                        ? 'You have no credits left today.'
-                        : `You have ${creditLimit.remaining} credits left today.`}{' '}
-                    For continuous use,
+                        ? 'Je hebt vandaag geen tegoed meer.'
+                        : `Je hebt nog ${creditLimit.remaining} tegoed vandaag.`}{' '}
+                    Voor doorlopend gebruik,
                     <span
                         className="inline-flex shrink-0 cursor-pointer flex-row items-center gap-1 pl-1 font-medium "
                         onClick={() => {
@@ -41,7 +41,7 @@ export function MessagesRemainingBadge() {
                         }}
                     >
                         <span className="text-muted-foreground inline-flex flex-row items-center gap-1 px-1 underline underline-offset-2">
-                            Add your own API key
+                            voeg je eigen API-sleutel toe
                         </span>
                     </span>
                 </div>

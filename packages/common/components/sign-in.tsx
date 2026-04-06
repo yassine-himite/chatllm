@@ -272,11 +272,11 @@ export const CustomSignIn = ({
             <div className="flex w-[300px] flex-col items-center gap-4">
                 <div className="flex flex-col items-center gap-1">
                     <h2 className="font-clash text-foreground !text-brand text-center text-[24px] font-semibold leading-tight">
-                        Check your email
+                        Controleer je e-mail
                     </h2>
                     <p className="text-muted-foreground text-center text-sm">
-                        We've sent a code to your email. Please check your inbox and enter the code
-                        to continue.
+                        We hebben een code naar je e-mail gestuurd. Controleer je inbox en voer de
+                        code in om verder te gaan.
                     </p>
                 </div>
                 <InputOTP
@@ -296,21 +296,21 @@ export const CustomSignIn = ({
                     </InputOTPGroup>
                 </InputOTP>
                 <p className="text-muted-foreground text-center text-sm">
-                    Didn't receive an email?{' '}
+                    Geen e-mail ontvangen?{' '}
                     <span
                         className={`hover:text-brand text-brand cursor-pointer underline ${
                             resending ? 'pointer-events-none opacity-70' : ''
                         }`}
                         onClick={handleSendCode}
                     >
-                        {resending ? 'Sending...' : 'Resend Code'}
+                        {resending ? 'Verzenden...' : 'Code opnieuw sturen'}
                     </span>
                 </p>
 
                 <div id="clerk-captcha"></div>
                 <div className="text-muted-foreground text-center text-sm">
                     {error && <p className="text-rose-400">{error}</p>}
-                    {resending && <p className="text-brand">Sending verification code...</p>}
+                    {resending && <p className="text-brand">Verificatiecode wordt verstuurd...</p>}
                 </div>
             </div>
         );
@@ -330,7 +330,7 @@ export const CustomSignIn = ({
             </Button>
             <div className="flex w-[320px] flex-col items-center gap-8">
                 <h2 className="text-muted-foreground/70 text-center text-[24px] font-semibold leading-tight">
-                    Sign in to unlock <br /> advanced research tools
+                    Meld je aan voor <br /> geavanceerde onderzoekstools
                 </h2>
 
                 <div className="flex w-[300px] flex-col space-y-1.5">
@@ -344,7 +344,7 @@ export const CustomSignIn = ({
                         ) : (
                             <FaGoogle className=" size-3" />
                         )}
-                        {isLoading === 'google' ? 'Authenticating...' : 'Continue with Google'}
+                        {isLoading === 'google' ? 'Authenticeren...' : 'Doorgaan met Google'}
                     </Button>
 
                     <Button
@@ -357,23 +357,23 @@ export const CustomSignIn = ({
                         ) : (
                             <FaGithub className=" size-3" />
                         )}
-                        {isLoading === 'github' ? 'Authenticating...' : 'Continue with GitHub'}
+                        {isLoading === 'github' ? 'Authenticeren...' : 'Doorgaan met GitHub'}
                     </Button>
                 </div>
                 <div className="text-muted-foreground/50 w-full text-center text-xs">
                     <span className="text-muted-foreground/50">
-                        By using this app, you agree to the{' '}
+                        Door deze app te gebruiken, ga je akkoord met de{' '}
                     </span>
                     <a href="/terms" className="hover:text-foreground underline">
-                        Terms of Service
+                        Servicevoorwaarden
                     </a>{' '}
-                    and{' '}
+                    en het{' '}
                     <a href="/privacy" className="hover:text-foreground underline">
-                        Privacy Policy
+                        Privacybeleid
                     </a>
                 </div>
                 <Button variant="ghost" size="sm" className="w-full" onClick={onClose}>
-                    Close
+                    Sluiten
                 </Button>
             </div>
         </>

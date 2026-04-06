@@ -31,7 +31,7 @@ export const MessageActions = forwardRef<HTMLDivElement, MessageActionsProps>(
                                 copyToClipboard(ref.current || '');
                             }
                         }}
-                        tooltip="Copy"
+                        tooltip="Kopiëren"
                     >
                         {status === 'copied' ? (
                             <IconCheck size={16} strokeWidth={2} />
@@ -52,7 +52,7 @@ export const MessageActions = forwardRef<HTMLDivElement, MessageActionsProps>(
                                     .join('\n')}`
                             );
                         }}
-                        tooltip="Copy Markdown"
+                        tooltip="Markdown kopiëren"
                     >
                         {markdownCopyStatus === 'copied' ? (
                             <IconCheck size={16} strokeWidth={2} />
@@ -64,7 +64,7 @@ export const MessageActions = forwardRef<HTMLDivElement, MessageActionsProps>(
                 {threadItem.status !== 'ERROR' && threadItem.answer?.status !== 'HUMAN_REVIEW' && (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost-bordered" size="icon-sm" tooltip="Rewrite">
+                            <Button variant="ghost-bordered" size="icon-sm" tooltip="Herschrijven">
                                 <IconRefresh size={16} strokeWidth={2} />
                             </Button>
                         </DropdownMenuTrigger>
@@ -94,14 +94,14 @@ export const MessageActions = forwardRef<HTMLDivElement, MessageActionsProps>(
                         onClick={() => {
                             removeThreadItem(threadItem.id);
                         }}
-                        tooltip="Remove"
+                        tooltip="Verwijderen"
                     >
                         <IconTrash size={16} strokeWidth={2} />
                     </Button>
                 )}
                 {threadItem.mode && (
                     <p className="text-muted-foreground px-2 text-xs">
-                        Generated with {getChatModeName(threadItem.mode)}
+                        Gegenereerd met {getChatModeName(threadItem.mode)}
                     </p>
                 )}
             </div>

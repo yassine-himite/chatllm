@@ -20,7 +20,7 @@ const NotFound: FC = () => {
           fontWeight: 'bold',
         }}
       >
-        Page not found
+        Pagina niet gevonden
       </h1>
       <Link
         href="/"
@@ -29,7 +29,7 @@ const NotFound: FC = () => {
           textDecoration: 'underline',
         }}
       >
-        Go back home
+        Terug naar home
       </Link>
     </div>
   );

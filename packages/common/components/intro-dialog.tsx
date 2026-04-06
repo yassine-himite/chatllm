@@ -27,31 +27,31 @@ export const IntroDialog = () => {
     const points = [
         {
             icon,
-            text: `**Privacy-focused**: Your chat history never leaves your device.`,
+            text: `**Privacygericht**: Je chatgeschiedenis verlaat nooit je apparaat.`,
         },
         {
             icon,
-            text: `**Open source**: Fully transparent and modifiable. Easily deploy it yourself.`,
+            text: `**Open source**: Volledig transparant en aanpasbaar. Eenvoudig zelf te deployen.`,
         },
         {
             icon,
-            text: `**Research-friendly**: Leverage Web Search, Pro Search, and Deep Research features.`,
+            text: `**Onderzoeksvriendelijk**: Gebruik Webzoeken, Pro Zoeken en Diepgaand Onderzoek.`,
         },
         {
             icon,
-            text: `**Comprehensive model support**: Compatible with all mainstream model providers.`,
+            text: `**Uitgebreide modelondersteuning**: Compatibel met alle grote modelaanbieders.`,
         },
         {
             icon,
-            text: `**BYOK (Bring Your Own Key)**: Use your own API key for unlimited chat.`,
+            text: `**BYOK (eigen sleutel)**: Gebruik je eigen API-sleutel voor onbeperkt chatten.`,
         },
         {
             icon,
-            text: `**MCP Compatibility**: Connect with any MCP servers/tools (coming soon).`,
+            text: `**MCP-compatibiliteit**: Verbind met MCP-servers en tools (binnenkort beschikbaar).`,
         },
         {
             icon,
-            text: `**Usage Tracking**: Monitor your model usage without paying (coming soon).`,
+            text: `**Gebruiksregistratie**: Bewaak je modelgebruik zonder te betalen (binnenkort beschikbaar).`,
         },
     ];
 
@@ -87,12 +87,12 @@ export const IntroDialog = () => {
                             </p>
                         </div>
                         <p className="text-base font-semibold">
-                            Private, Open-Source, and Built for You
+                            Privé, Open-Source en voor jou gemaakt
                         </p>
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <h3 className="text-sm font-semibold">Key benefits:</h3>
+                        <h3 className="text-sm font-semibold">Belangrijkste voordelen:</h3>
 
                         <div className="flex flex-col items-start gap-1.5">
                             {points.map((point, index) => (

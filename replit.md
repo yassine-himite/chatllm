@@ -1,6 +1,6 @@
-# LLMChat Web
+# twelo.ai
 
-A Next.js 14 AI chat application (monorepo) migrated from Vercel to Replit.
+A Next.js 14 AI chat application (monorepo) migrated from Vercel to Replit, rebranded from LLMChat/llmchat.co to twelo.ai with full Dutch (NL) UI translation.
 
 ## Project Structure
 
@@ -18,6 +18,14 @@ Uses **Bun** (`bun@1.1.19`) with Turborepo for monorepo management.
 The workflow runs: `cd apps/web && ../../node_modules/.bin/next dev -p 5000 -H 0.0.0.0`
 
 Port 5000, bound to 0.0.0.0 for Replit compatibility.
+
+## Branding & UI
+
+- **Brand name**: twelo.ai (rebranded from llmchat.co)
+- **Brand color**: `#864ffe` (HSL `259 99% 65%`) — set via `--brand` CSS variable in `apps/web/app/globals.css`
+- **Dark/light mode**: ThemeProvider enabled; sun/moon toggle in sidebar for all auth states
+- **Language**: Entire UI translated to Dutch (NL)
+  - Sidebar, settings modal, chat input, intro dialog, sign-in, feedback widget, command search, message actions, example prompts, error pages — all in Dutch
 
 ## Replit Migration Notes
 

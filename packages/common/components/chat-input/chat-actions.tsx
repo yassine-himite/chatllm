@@ -30,15 +30,15 @@ import { BYOKIcon, NewIcon } from '../icons';
 
 export const chatOptions = [
     {
-        label: 'Deep Research',
-        description: 'In depth research on complex topic',
+        label: 'Diepgaand onderzoek',
+        description: 'Grondig onderzoek naar complexe onderwerpen',
         value: ChatMode.Deep,
         icon: <IconAtom size={16} className="text-muted-foreground" strokeWidth={2} />,
         creditCost: CHAT_MODE_CREDIT_COSTS[ChatMode.Deep],
     },
     {
-        label: 'Pro Search',
-        description: 'Pro search with web search',
+        label: 'Pro Zoeken',
+        description: 'Pro zoeken met webzoekfunctie',
         value: ChatMode.Pro,
         icon: <IconNorthStar size={16} className="text-muted-foreground" strokeWidth={2} />,
         creditCost: CHAT_MODE_CREDIT_COSTS[ChatMode.Pro],
@@ -127,7 +127,7 @@ export const AttachmentButton = () => {
     return (
         <Button
             size="icon"
-            tooltip="Attachment (coming soon)"
+            tooltip="Bijlage (binnenkort beschikbaar)"
             variant="ghost"
             className="gap-2"
             rounded="full"
@@ -175,7 +175,7 @@ export const WebSearchButton = () => {
     return (
         <Button
             size={useWebSearch ? 'sm' : 'icon-sm'}
-            tooltip="Web Search"
+            tooltip="Webzoeken"
             variant={useWebSearch ? 'secondary' : 'ghost'}
             className={cn('gap-2', useWebSearch && 'bg-blue-500/10 text-blue-500')}
             onClick={() => setUseWebSearch(!useWebSearch)}
@@ -198,7 +198,7 @@ export const NewLineIndicator = () => {
 
     return (
         <p className="flex flex-row items-center gap-1 text-xs text-gray-500">
-            use <Kbd>Shift</Kbd> <Kbd>Enter</Kbd> for new line
+            gebruik <Kbd>Shift</Kbd> <Kbd>Enter</Kbd> voor nieuwe regel
         </p>
     );
 };
@@ -206,7 +206,7 @@ export const NewLineIndicator = () => {
 export const GeneratingStatus = () => {
     return (
         <div className="text-muted-foreground flex flex-row items-center gap-1 px-2 text-xs">
-            <DotSpinner /> Generating...
+            <DotSpinner /> Genereren...
         </div>
     );
 };
@@ -232,7 +232,7 @@ export const ChatModeOptions = ({
         >
             {isChatPage && (
                 <DropdownMenuGroup>
-                    <DropdownMenuLabel>Advanced Mode</DropdownMenuLabel>
+                    <DropdownMenuLabel>Geavanceerde modus</DropdownMenuLabel>
                     {chatOptions.map(option => (
                         <DropdownMenuItem
                             key={option.label}
@@ -264,7 +264,7 @@ export const ChatModeOptions = ({
                 </DropdownMenuGroup>
             )}
             <DropdownMenuGroup>
-                <DropdownMenuLabel>Models</DropdownMenuLabel>
+                <DropdownMenuLabel>Modellen</DropdownMenuLabel>
                 {modelOptions.map(option => (
                     <DropdownMenuItem
                         key={option.label}
@@ -321,7 +321,7 @@ export const SendStopButton = ({
                             size="icon-sm"
                             variant="default"
                             onClick={stopGeneration}
-                            tooltip="Stop Generation"
+                            tooltip="Generatie stoppen"
                         >
                             <IconPlayerStopFilled size={14} strokeWidth={2} />
                         </Button>
@@ -336,7 +336,7 @@ export const SendStopButton = ({
                     >
                         <Button
                             size="icon-sm"
-                            tooltip="Send Message"
+                            tooltip="Bericht verzenden"
                             variant={hasTextInput ? 'default' : 'secondary'}
                             disabled={!hasTextInput || isGenerating}
                             onClick={() => {

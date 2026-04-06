@@ -44,11 +44,11 @@ export const CommandSearch = () => {
     };
 
     const groupsNames = {
-        today: 'Today',
-        yesterday: 'Yesterday',
-        last7Days: 'Last 7 Days',
-        last30Days: 'Last 30 Days',
-        previousMonths: 'Previous Months',
+        today: 'Vandaag',
+        yesterday: 'Gisteren',
+        last7Days: 'Afgelopen 7 dagen',
+        last30Days: 'Afgelopen 30 dagen',
+        previousMonths: 'Vorige maanden',
     };
 
     threads.forEach(thread => {
@@ -91,7 +91,7 @@ export const CommandSearch = () => {
 
     const actions = [
         {
-            name: 'New Thread',
+            name: 'Nieuw gesprek',
             icon: IconPlus,
             action: () => {
                 router.push('/chat');
@@ -99,7 +99,7 @@ export const CommandSearch = () => {
             },
         },
         {
-            name: 'Delete Thread',
+            name: 'Gesprek verwijderen',
             icon: IconTrash,
             action: async () => {
                 const thread = await getThread(currentThreadId as string);
@@ -111,7 +111,7 @@ export const CommandSearch = () => {
             },
         },
         {
-            name: 'Use your own API key',
+            name: 'Gebruik je eigen API-sleutel',
             icon: IconKey,
             action: () => {
                 setIsSettingsOpen(true);
@@ -120,7 +120,7 @@ export const CommandSearch = () => {
             },
         },
         {
-            name: 'Remove All Threads',
+            name: 'Alle gesprekken verwijderen',
             icon: IconTrash,
             action: () => {
                 clearThreads();
@@ -133,7 +133,7 @@ export const CommandSearch = () => {
     return (
         <CommandDialog open={isCommandSearchOpen} onOpenChange={setIsCommandSearchOpen}>
             <div className="flex w-full flex-row items-center gap-2 p-0.5">
-                <CommandInput placeholder="Search..." className="w-full" />
+                <CommandInput placeholder="Zoeken..." className="w-full" />
                 <div className="flex shrink-0 items-center gap-1 px-2">
                     <Kbd className="h-5 w-5">
                         <IconCommand size={12} strokeWidth={2} className="shrink-0" />
@@ -145,7 +145,7 @@ export const CommandSearch = () => {
                 <div className="border-border h-[1px] w-full border-b" />
             </div>
             <CommandList className="max-h-[420px] overflow-y-auto p-0.5 pt-1.5">
-                <CommandEmpty>No results found.</CommandEmpty>
+                <CommandEmpty>Geen resultaten gevonden.</CommandEmpty>
                 <CommandGroup>
                     {actions.map(action => (
                         <CommandItem

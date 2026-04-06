@@ -24,19 +24,19 @@ export const SettingsModal = () => {
     const settingMenu = [
         {
             icon: <IconSettings2 size={16} strokeWidth={2} className="text-muted-foreground" />,
-            title: 'Customize',
+            title: 'Aanpassen',
             key: SETTING_TABS.PERSONALIZATION,
             component: <PersonalizationSettings />,
         },
         {
             icon: <IconBolt size={16} strokeWidth={2} className="text-muted-foreground" />,
-            title: 'Usage',
+            title: 'Gebruik',
             key: SETTING_TABS.CREDITS,
             component: <CreditsSettings />,
         },
         {
             icon: <IconKey size={16} strokeWidth={2} className="text-muted-foreground" />,
-            title: 'API Keys',
+            title: 'API-sleutels',
             key: SETTING_TABS.API_KEYS,
             component: <ApiKeySettings />,
         },
@@ -54,7 +54,7 @@ export const SettingsModal = () => {
                 className="h-full max-h-[600px] !max-w-[760px] overflow-x-hidden rounded-xl p-0"
             >
                 <div className="no-scrollbar relative max-w-full overflow-y-auto overflow-x-hidden">
-                    <h3 className="border-border mx-5 border-b py-4 text-lg font-bold">Settings</h3>
+                    <h3 className="border-border mx-5 border-b py-4 text-lg font-bold">Instellingen</h3>
                     <div className="flex flex-row gap-6 p-4">
                         <div className="flex w-[160px] shrink-0 flex-col gap-1">
                             {settingMenu.map(setting => (
@@ -88,20 +88,20 @@ export const MCPSettings = () => {
     return (
         <div className="flex w-full flex-col gap-6 overflow-x-hidden">
             <div className="flex flex-col">
-                <h2 className="flex items-center gap-1 text-base font-medium">MCP Tools</h2>
+                <h2 className="flex items-center gap-1 text-base font-medium">MCP-hulpmiddelen</h2>
                 <p className="text-muted-foreground text-xs">
-                    Connect your MCP tools. This will only work with your own API keys.
+                    Verbind je MCP-hulpmiddelen. Dit werkt alleen met je eigen API-sleutels.
                 </p>
             </div>
             <div className="flex flex-col gap-2">
                 <p className="text-muted-foreground text-xs font-medium">
-                    Connected Tools{' '}
+                    Verbonden hulpmiddelen{' '}
                     <Badge
                         variant="secondary"
                         className="text-brand inline-flex items-center gap-1 rounded-full bg-transparent"
                     >
                         <span className="bg-brand inline-block size-2 rounded-full"></span>
-                        {mcpConfig && Object.keys(mcpConfig).length} Connected
+                        {mcpConfig && Object.keys(mcpConfig).length} verbonden
                     </Badge>
                 </p>
                 {mcpConfig &&
@@ -119,7 +119,7 @@ export const MCPSettings = () => {
                                 <Button
                                     size="xs"
                                     variant="ghost"
-                                    tooltip="Delete Tool"
+                                    tooltip="Hulpmiddel verwijderen"
                                     onClick={() => {
                                         removeMcpConfig(key);
                                     }}
@@ -140,12 +140,12 @@ export const MCPSettings = () => {
                     className="mt-2 self-start"
                     onClick={() => setIsAddToolDialogOpen(true)}
                 >
-                    Add Tool
+                    Hulpmiddel toevoegen
                 </Button>
             </div>
 
             <div className="mt-6 border-t border-dashed pt-6">
-                <p className="text-muted-foreground text-xs">Learn more about MCP:</p>
+                <p className="text-muted-foreground text-xs">Meer informatie over MCP:</p>
                 <div className="mt-2 flex flex-col gap-2 text-sm">
                     <a
                         href="https://mcp.composio.dev"
@@ -153,7 +153,7 @@ export const MCPSettings = () => {
                         rel="noopener noreferrer"
                         className="text-primary inline-flex items-center hover:underline"
                     >
-                        Browse Composio MCP Directory →
+                        Bladeren door Composio MCP-directory →
                     </a>
                     <a
                         href="https://www.anthropic.com/news/model-context-protocol"
@@ -161,7 +161,7 @@ export const MCPSettings = () => {
                         rel="noopener noreferrer"
                         className="text-primary inline-flex items-center hover:underline"
                     >
-                        Read MCP Documentation →
+                        MCP-documentatie lezen →
                     </a>
                 </div>
             </div>
@@ -233,14 +233,14 @@ const AddToolDialog = ({ isOpen, onOpenChange, onAddTool }: AddToolDialogProps) 
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogContent ariaTitle="Add MCP Tool" className="!max-w-md">
                 <div className="flex flex-col gap-4">
-                    <h3 className="text-lg font-bold">Add New MCP Tool</h3>
+                    <h3 className="text-lg font-bold">Nieuw MCP-hulpmiddel toevoegen</h3>
 
                     {error && <p className="text-destructive text-sm font-medium">{error}</p>}
 
                     <div className="flex flex-col gap-2">
-                        <label className="text-sm font-medium">Tool Name</label>
+                        <label className="text-sm font-medium">Naam hulpmiddel</label>
                         <Input
-                            placeholder="Tool Name"
+                            placeholder="Naam hulpmiddel"
                             value={mcpToolName}
                             onChange={e => {
                                 const key = e.target.value?.trim().toLowerCase().replace(/ /g, '-');
@@ -250,12 +250,12 @@ const AddToolDialog = ({ isOpen, onOpenChange, onAddTool }: AddToolDialogProps) 
                             }}
                         />
                         <p className="text-muted-foreground text-xs">
-                            Will be automatically converted to lowercase with hyphens
+                            Wordt automatisch omgezet naar kleine letters met koppeltekens
                         </p>
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <label className="text-sm font-medium">Tool Server URL</label>
+                        <label className="text-sm font-medium">Server-URL hulpmiddel</label>
                         <Input
                             placeholder="https://your-mcp-server.com"
                             value={mcpToolUrl}
@@ -266,7 +266,7 @@ const AddToolDialog = ({ isOpen, onOpenChange, onAddTool }: AddToolDialogProps) 
                             }}
                         />
                         <p className="text-muted-foreground text-xs">
-                            Example: https://your-mcp-server.com
+                            Voorbeeld: https://jouw-mcp-server.com
                         </p>
                     </div>
                 </div>
@@ -277,10 +277,10 @@ const AddToolDialog = ({ isOpen, onOpenChange, onAddTool }: AddToolDialogProps) 
                             rounded={'full'}
                             onClick={() => handleOpenChange(false)}
                         >
-                            Cancel
+                            Annuleren
                         </Button>
                         <Button onClick={handleAddTool} rounded="full">
-                            Add Tool
+                            Toevoegen
                         </Button>
                     </div>
                 </DialogFooter>
@@ -335,12 +335,12 @@ export const ApiKeySettings = () => {
         <div className="flex flex-col gap-6">
             <div className="flex flex-col">
                 <h2 className="flex items-center gap-1 text-base font-semibold">
-                    API Keys <BYOKIcon />
+                    API-sleutels <BYOKIcon />
                 </h2>
 
                 <p className="text-muted-foreground text-xs">
-                    By default, your API Key is stored locally on your browser and never sent
-                    anywhere else.
+                    Standaard wordt je API-sleutel lokaal opgeslagen in je browser en nooit ergens
+                    anders heen gestuurd.
                 </p>
             </div>
 
@@ -354,7 +354,7 @@ export const ApiKeySettings = () => {
                             rel="noopener noreferrer"
                             className="text-sm text-blue-400 underline-offset-2 hover:underline"
                         >
-                            (Get API key here)
+                            (Haal hier je sleutel op)
                         </a>
                     </div>
 
@@ -383,7 +383,7 @@ export const ApiKeySettings = () => {
                                         <span className="flex-1">{getMaskedKey(apiKey.value)}</span>
                                     ) : (
                                         <span className="text-muted-foreground flex-1 text-sm">
-                                            No API key set
+                                            Geen API-sleutel ingesteld
                                         </span>
                                     )}
                                 </div>
@@ -392,7 +392,7 @@ export const ApiKeySettings = () => {
                                     size="sm"
                                     onClick={() => setIsEditing(apiKey.key)}
                                 >
-                                    {apiKey.value ? 'Change Key' : 'Add Key'}
+                                    {apiKey.value ? 'Sleutel wijzigen' : 'Sleutel toevoegen'}
                                 </Button>
                             </>
                         )}
@@ -410,15 +410,15 @@ export const CreditsSettings = () => {
 
     const info = [
         {
-            title: 'Plan',
+            title: 'Abonnement',
             value: (
                 <Badge variant="secondary" className="bg-brand/10 text-brand rounded-full">
-                    <span className="text-xs font-medium">FREE</span>
+                    <span className="text-xs font-medium">GRATIS</span>
                 </Badge>
             ),
         },
         {
-            title: 'Credits',
+            title: 'Tegoed',
             value: (
                 <div className="flex h-7 flex-row items-center gap-1 rounded-full py-1">
                     <IconBoltFilled size={14} strokeWidth={2} className="text-brand" />
@@ -429,7 +429,7 @@ export const CreditsSettings = () => {
             ),
         },
         {
-            title: 'Next reset',
+            title: 'Volgende reset',
             value: moment(resetDate).fromNow(),
         },
     ];
@@ -437,11 +437,11 @@ export const CreditsSettings = () => {
     return (
         <div className="flex flex-col gap-6">
             <div className="flex flex-col items-start gap-2">
-                <h2 className="flex items-center gap-1 text-base font-medium">Usage Credits</h2>
+                <h2 className="flex items-center gap-1 text-base font-medium">Gebruikstegoed</h2>
                 <Alert variant="info" className="w-full">
                     <AlertDescription className="text-muted-foreground/70 text-sm leading-tight">
-                        You'll recieve some free credits everyday. Once credits are used, you can
-                        use your own API keys to continue.
+                        Je ontvangt elke dag wat gratis tegoed. Zodra het tegoed op is, kun je je
+                        eigen API-sleutels gebruiken om door te gaan.
                     </AlertDescription>
                 </Alert>
 
@@ -474,9 +474,9 @@ export const PersonalizationSettings = () => {
     });
     return (
         <div className="flex flex-col gap-1 pb-3">
-            <h3 className="text-base font-semibold">Customize your AI Response</h3>
+            <h3 className="text-base font-semibold">Pas je AI-antwoord aan</h3>
             <p className="text-muted-foreground text-sm">
-                These instructions will be added to the beginning of every message.
+                Deze instructies worden aan het begin van elk bericht toegevoegd.
             </p>
             <div className=" shadow-subtle-sm border-border mt-2 rounded-lg border p-3">
                 <ChatEditor editor={editor} />

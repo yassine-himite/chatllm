@@ -17,37 +17,37 @@ const bricolage = Bricolage_Grotesque({
 import './globals.css';
 
 export const metadata: Metadata = {
-    title: 'twelo.ai - Go Deeper with AI-Powered Research & Agentic Workflows',
+    title: 'twelo.ai - Dieper gaan met AI-onderzoek en agentische workflows',
     description:
-        'Experience deep, AI-powered research with agentic workflows and a wide variety of models for advanced productivity.',
-    keywords: 'AI chat, LLM, language models, privacy, minimal UI, ollama, chatgpt',
+        'Ervaar diepgaand AI-onderzoek met agentische workflows en een breed scala aan modellen voor geavanceerde productiviteit.',
+    keywords: 'AI chat, LLM, taalmodellen, privacy, minimale UI, ollama, chatgpt',
     authors: [{ name: 'Trendy design', url: 'https://trendy.design' }],
     creator: 'Trendy design',
     publisher: 'Trendy design',
     openGraph: {
-        title: 'twelo.ai - Go Deeper with AI-Powered Research & Agentic Workflows',
+        title: 'twelo.ai - Dieper gaan met AI-onderzoek en agentische workflows',
         siteName: 'twelo.ai',
         description:
-            'Experience deep, AI-powered research with agentic workflows and a wide variety of models for advanced productivity.',
+            'Ervaar diepgaand AI-onderzoek met agentische workflows en een breed scala aan modellen voor geavanceerde productiviteit.',
         url: 'https://twelo.ai',
         type: 'website',
-        locale: 'en_US',
+        locale: 'nl_NL',
         images: [
             {
                 url: 'https://twelo.ai/og-image.jpg',
                 width: 1200,
                 height: 630,
-                alt: 'Twelo AI Preview',
+                alt: 'Twelo AI voorbeeld',
             },
         ],
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'twelo.ai - Go Deeper with AI-Powered Research & Agentic Workflows',
+        title: 'twelo.ai - Dieper gaan met AI-onderzoek en agentische workflows',
         site: 'twelo.ai',
         creator: '@twelo_ai',
         description:
-            'Experience deep, AI-powered research with agentic workflows and a wide variety of models for advanced productivity.',
+            'Ervaar diepgaand AI-onderzoek met agentische workflows en een breed scala aan modellen voor geavanceerde productiviteit.',
         images: ['https://twelo.ai/twitter-image.jpg'],
     },
     robots: {

@@ -142,7 +142,7 @@ export const HistoryItem = ({
                             handleEditClick();
                         }}
                     >
-                        Rename
+                        Hernoemen
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         onClick={e => {
@@ -150,15 +150,15 @@ export const HistoryItem = ({
                             handleDeleteConfirm();
                         }}
                     >
-                        Delete Chat
+                        Gesprek verwijderen
                     </DropdownMenuItem>
                     {isPinned ? (
                         <DropdownMenuItem onClick={() => unpinThread(thread.id)}>
-                            Unpin
+                            Losmaken
                         </DropdownMenuItem>
                     ) : (
                         <DropdownMenuItem onClick={() => pinThread(thread.id)}>
-                            Pin
+                            Vastzetten
                         </DropdownMenuItem>
                     )}
                 </DropdownMenuContent>
