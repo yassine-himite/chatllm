@@ -144,7 +144,7 @@ export const completionTask = createTask<WorkflowEventSchema, WorkflowContextSch
 
         events?.update('answer', prev => ({
             ...prev,
-            text: '',
+            text: response,
             fullText: response,
             status: 'COMPLETED',
         }));

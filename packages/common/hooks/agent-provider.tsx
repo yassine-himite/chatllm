@@ -113,7 +113,10 @@ export const AgentProvider = ({ children }: { children: ReactNode }) => {
                     ? {
                           answer: {
                               ...eventData.answer,
-                              text: (prevItem.answer?.text || '') + eventData.answer.text,
+                              text:
+                                  eventData.answer?.status === 'COMPLETED'
+                                      ? eventData.answer.text || prevItem.answer?.text || ''
+                                      : (prevItem.answer?.text || '') + (eventData.answer?.text || ''),
                           },
                       }
                     : { [eventType]: eventData[eventType] }),

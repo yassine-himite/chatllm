@@ -29,7 +29,7 @@ export const ThreadItem = memo(
         isLast: boolean;
     }) => {
         const { isAnimationComplete, text: animatedText } = useAnimatedText(
-            threadItem.answer?.text || '',
+            threadItem.answer?.text || threadItem.answer?.fullText || '',
             isLast && isGenerating
         );
         const setCurrentSources = useChatStore(state => state.setCurrentSources);
@@ -56,7 +56,8 @@ export const ThreadItem = memo(
         }, [threadItem]);
 
         const hasAnswer = useMemo(() => {
-            return threadItem.answer?.text && threadItem.answer?.text.length > 0;
+            const text = threadItem.answer?.text || threadItem.answer?.fullText || '';
+            return text.length > 0;
         }, [threadItem.answer]);
 
         const hasResponse = useMemo(() => {
@@ -104,12 +105,12 @@ export const ThreadItem = memo(
                         )}
 
                         <div ref={messageRef} className="w-full">
-                            {hasAnswer && threadItem.answer?.text && (
+                            {hasAnswer && (threadItem.answer?.text || threadItem.answer?.fullText) && (
                                 <div className="flex flex-col">
                                     <SourceGrid sources={threadItem.sources || []} />
 
                                     <MarkdownContent
-                                        content={animatedText || ''}
+                                        content={animatedText || threadItem.answer?.fullText || ''}
                                         key={`answer-${threadItem.id}`}
                                         isCompleted={['COMPLETED', 'ERROR', 'ABORTED'].includes(
                                             threadItem.status || ''

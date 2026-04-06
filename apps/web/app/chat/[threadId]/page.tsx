@@ -1,6 +1,7 @@
 'use client';
 import { TableOfMessages, Thread } from '@repo/common/components';
 import { useChatStore } from '@repo/common/store';
+
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useStickToBottom } from 'use-stick-to-bottom';
@@ -36,7 +37,12 @@ const ChatSessionPage = ({ params }: { params: { threadId: string } }) => {
             if (thread?.id) {
                 switchThread(thread.id);
             } else {
-                router.push('/chat');
+                const inStore = useChatStore.getState().threads.find(t => t.id === threadId);
+                if (inStore) {
+                    switchThread(threadId);
+                } else {
+                    router.push('/chat');
+                }
             }
         });
     }, [params]);
