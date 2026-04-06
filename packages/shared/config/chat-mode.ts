@@ -11,6 +11,7 @@ export enum ChatMode {
     DEEPSEEK_R1 = 'deepseek-r1',
     CLAUDE_3_5_SONNET = 'claude-3-5-sonnet',
     CLAUDE_3_7_SONNET = 'claude-3-7-sonnet',
+    AZURE_OPENAI = 'azure-openai',
 }
 
 export const ChatModeConfig: Record<
@@ -100,6 +101,12 @@ export const ChatModeConfig: Record<
         retry: true,
         isAuthRequired: true,
     },
+    [ChatMode.AZURE_OPENAI]: {
+        webSearch: false,
+        imageUpload: false,
+        retry: true,
+        isAuthRequired: true,
+    },
 };
 
 export const CHAT_MODE_CREDIT_COSTS = {
@@ -115,6 +122,7 @@ export const CHAT_MODE_CREDIT_COSTS = {
     [ChatMode.CLAUDE_3_7_SONNET]: 5,
     [ChatMode.GEMINI_2_FLASH]: 1,
     [ChatMode.DEEPSEEK_R1]: 5,
+    [ChatMode.AZURE_OPENAI]: 0,
 };
 
 export const getChatModeName = (mode: ChatMode) => {
@@ -143,5 +151,7 @@ export const getChatModeName = (mode: ChatMode) => {
             return 'DeepSeek R1';
         case ChatMode.GEMINI_2_FLASH:
             return 'Gemini 2 Flash';
+        case ChatMode.AZURE_OPENAI:
+            return 'Azure OpenAI';
     }
 };

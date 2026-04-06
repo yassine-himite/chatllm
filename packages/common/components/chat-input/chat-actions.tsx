@@ -1,7 +1,7 @@
 'use client';
 import { useUser } from '@repo/common/context';
 import { DotSpinner } from '@repo/common/components';
-import { useApiKeysStore, useChatStore } from '@repo/common/store';
+import { useApiKeysStore, useAzureKeysStore, useChatStore } from '@repo/common/store';
 import { CHAT_MODE_CREDIT_COSTS, ChatMode, ChatModeConfig } from '@repo/shared/config';
 import {
     Button,
@@ -142,20 +142,35 @@ export const ChatModeButton = () => {
     const chatMode = useChatStore(state => state.chatMode);
     const setChatMode = useChatStore(state => state.setChatMode);
     const [isChatModeOpen, setIsChatModeOpen] = useState(false);
-    const hasApiKeyForChatMode = useApiKeysStore(state => state.hasApiKeyForChatMode);
     const isChatPage = usePathname().startsWith('/chat');
+    const selectedAzureKey = useAzureKeysStore(state => state.getSelectedKey());
 
-    const selectedOption =
-        (isChatPage
-            ? [...chatOptions, ...modelOptions].find(option => option.value === chatMode)
-            : [...modelOptions].find(option => option.value === chatMode)) ?? modelOptions[0];
+    const getLabel = () => {
+        if (chatMode === ChatMode.AZURE_OPENAI && selectedAzureKey) {
+            return selectedAzureKey.name;
+        }
+        const option =
+            (isChatPage
+                ? [...chatOptions, ...modelOptions].find(o => o.value === chatMode)
+                : [...modelOptions].find(o => o.value === chatMode)) ?? modelOptions[0];
+        return option?.label;
+    };
+
+    const getIcon = () => {
+        if (chatMode === ChatMode.AZURE_OPENAI) return undefined;
+        const option =
+            (isChatPage
+                ? [...chatOptions, ...modelOptions].find(o => o.value === chatMode)
+                : [...modelOptions].find(o => o.value === chatMode)) ?? modelOptions[0];
+        return option?.icon;
+    };
 
     return (
         <DropdownMenu open={isChatModeOpen} onOpenChange={setIsChatModeOpen}>
             <DropdownMenuTrigger asChild>
                 <Button variant={'secondary'} size="xs">
-                    {selectedOption?.icon}
-                    {selectedOption?.label}
+                    {getIcon()}
+                    {getLabel()}
                     <IconChevronDown size={14} strokeWidth={2} />
                 </Button>
             </DropdownMenuTrigger>
@@ -221,9 +236,11 @@ export const ChatModeOptions = ({
     isRetry?: boolean;
 }) => {
     const { isSignedIn } = useUser();
-    const hasApiKeyForChatMode = useApiKeysStore(state => state.hasApiKeyForChatMode);
     const isChatPage = usePathname().startsWith('/chat');
     const { push } = useRouter();
+    const azureKeys = useAzureKeysStore(state => state.getAllKeys());
+    const setSelectedAzureKeyId = useAzureKeysStore(state => state.setSelectedKeyId);
+
     return (
         <DropdownMenuContent
             align="start"
@@ -247,9 +264,8 @@ export const ChatModeOptions = ({
                         >
                             <div className="flex w-full flex-row items-start gap-1.5 px-1.5 py-1.5">
                                 <div className="flex flex-col gap-0 pt-1">{option.icon}</div>
-
                                 <div className="flex flex-col gap-0">
-                                    {<p className="m-0 text-sm font-medium">{option.label}</p>}
+                                    <p className="m-0 text-sm font-medium">{option.label}</p>
                                     {option.description && (
                                         <p className="text-muted-foreground text-xs font-light">
                                             {option.description}
@@ -278,17 +294,34 @@ export const ChatModeOptions = ({
                         className="h-auto"
                     >
                         <div className="flex w-full flex-row items-center gap-2.5 px-1.5 py-1.5">
-                            <div className="flex flex-col gap-0">
-                                {<p className="text-sm font-medium">{option.label}</p>}
-                            </div>
+                            <p className="text-sm font-medium">{option.label}</p>
                             <div className="flex-1" />
                             {ChatModeConfig[option.value]?.isNew && <NewIcon />}
-
-                            {hasApiKeyForChatMode(option.value) && <BYOKIcon />}
                         </div>
                     </DropdownMenuItem>
                 ))}
             </DropdownMenuGroup>
+            {azureKeys.length > 0 && (
+                <DropdownMenuGroup>
+                    <DropdownMenuLabel>Mijn Azure OpenAI</DropdownMenuLabel>
+                    {azureKeys.map(key => (
+                        <DropdownMenuItem
+                            key={key.id}
+                            onSelect={() => {
+                                setSelectedAzureKeyId(key.id);
+                                setChatMode(ChatMode.AZURE_OPENAI);
+                            }}
+                            className="h-auto"
+                        >
+                            <div className="flex w-full flex-row items-center gap-2.5 px-1.5 py-1.5">
+                                <p className="text-sm font-medium">{key.name}</p>
+                                <div className="flex-1" />
+                                <BYOKIcon />
+                            </div>
+                        </DropdownMenuItem>
+                    ))}
+                </DropdownMenuGroup>
+            )}
         </DropdownMenuContent>
     );
 };

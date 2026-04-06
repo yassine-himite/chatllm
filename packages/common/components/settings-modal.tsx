@@ -10,7 +10,7 @@ import { Badge, Dialog, DialogContent, Input } from '@repo/ui';
 import { useChatEditor } from '@repo/common/hooks';
 import moment from 'moment';
 import { useState } from 'react';
-import { ApiKeys, useApiKeysStore } from '../store/api-keys.store';
+import { useAzureKeysStore } from '../store/azure-keys.store';
 import { SETTING_TABS, useAppStore } from '../store/app.store';
 import { useChatStore } from '../store/chat.store';
 import { ChatEditor } from './chat-input';
@@ -291,116 +291,181 @@ const AddToolDialog = ({ isOpen, onOpenChange, onAddTool }: AddToolDialogProps) 
     );
 };
 
+type AzureKeyFormState = {
+    name: string;
+    apiKey: string;
+    endpoint: string;
+};
+
+const EMPTY_FORM: AzureKeyFormState = { name: '', apiKey: '', endpoint: '' };
+
+const getMaskedKey = (key: string) => {
+    if (!key) return '';
+    return '****************' + key.slice(-4);
+};
+
 export const ApiKeySettings = () => {
-    const apiKeys = useApiKeysStore(state => state.getAllKeys());
-    const setApiKey = useApiKeysStore(state => state.setKey);
-    const [isEditing, setIsEditing] = useState<string | null>(null);
+    const keys = useAzureKeysStore(state => state.getAllKeys());
+    const addKey = useAzureKeysStore(state => state.addKey);
+    const updateKey = useAzureKeysStore(state => state.updateKey);
+    const removeKey = useAzureKeysStore(state => state.removeKey);
 
-    const apiKeyList = [
-        {
-            name: 'OpenAI',
-            key: 'OPENAI_API_KEY' as keyof ApiKeys,
-            value: apiKeys.OPENAI_API_KEY,
-            url: 'https://platform.openai.com/api-keys',
-        },
-        {
-            name: 'Anthropic',
-            key: 'ANTHROPIC_API_KEY' as keyof ApiKeys,
-            value: apiKeys.ANTHROPIC_API_KEY,
-            url: 'https://console.anthropic.com/settings/keys',
-        },
-        {
-            name: 'Google Gemini',
-            key: 'GEMINI_API_KEY' as keyof ApiKeys,
-            value: apiKeys.GEMINI_API_KEY,
-            url: 'https://ai.google.dev/api',
-        },
-    ];
+    const [editingId, setEditingId] = useState<string | 'new' | null>(null);
+    const [form, setForm] = useState<AzureKeyFormState>(EMPTY_FORM);
 
-    const validateApiKey = (apiKey: string, provider: string) => {
-        // Validation logic will be implemented later
-        console.log(`Validating ${provider} API key: ${apiKey}`);
-        return true;
+    const openNew = () => {
+        setForm(EMPTY_FORM);
+        setEditingId('new');
     };
 
-    const handleSave = (keyName: keyof ApiKeys, value: string) => {
-        setApiKey(keyName, value);
-        setIsEditing(null);
+    const openEdit = (id: string) => {
+        const key = keys.find(k => k.id === id);
+        if (!key) return;
+        setForm({ name: key.name, apiKey: key.apiKey, endpoint: key.endpoint });
+        setEditingId(id);
     };
 
-    const getMaskedKey = (key: string) => {
-        if (!key) return '';
-        return '****************' + key.slice(-4);
+    const handleSave = () => {
+        if (!form.name.trim() || !form.apiKey.trim()) return;
+        if (editingId === 'new') {
+            addKey(form.name.trim(), form.apiKey.trim(), form.endpoint.trim());
+        } else if (editingId) {
+            updateKey(editingId, {
+                name: form.name.trim(),
+                apiKey: form.apiKey.trim(),
+                endpoint: form.endpoint.trim(),
+            });
+        }
+        setEditingId(null);
+        setForm(EMPTY_FORM);
+    };
+
+    const handleCancel = () => {
+        setEditingId(null);
+        setForm(EMPTY_FORM);
     };
 
     return (
         <div className="flex flex-col gap-6">
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-1">
                 <h2 className="flex items-center gap-1 text-base font-semibold">
-                    API-sleutels <BYOKIcon />
+                    Azure OpenAI API-sleutels <BYOKIcon />
                 </h2>
-
                 <p className="text-muted-foreground text-xs">
-                    Standaard wordt je API-sleutel lokaal opgeslagen in je browser en nooit ergens
-                    anders heen gestuurd.
+                    Voeg meerdere Azure OpenAI sleutels toe. Elke sleutel verschijnt als optie in het chatmodel-menu.
+                    Sleutels worden lokaal in je browser opgeslagen.
                 </p>
             </div>
 
-            {apiKeyList.map(apiKey => (
-                <div key={apiKey.key} className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">{apiKey.name} API Key:</span>
-                        <a
-                            href={apiKey.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-sm text-blue-400 underline-offset-2 hover:underline"
-                        >
-                            (Haal hier je sleutel op)
-                        </a>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                        {isEditing === apiKey.key ? (
-                            <>
-                                <div className="flex-1">
-                                    <Input
-                                        value={apiKey.value || ''}
-                                        placeholder={`Enter ${apiKey.name} API key`}
-                                        onChange={e => setApiKey(apiKey.key, e.target.value)}
-                                    />
+            {keys.length > 0 && (
+                <div className="flex flex-col gap-3">
+                    {keys.map(key => (
+                        <div key={key.id}>
+                            {editingId === key.id ? (
+                                <div className="border-border flex flex-col gap-3 rounded-lg border p-3">
+                                    <div className="flex flex-col gap-1.5">
+                                        <label className="text-xs font-medium">Naam (zichtbaar in dropdown)</label>
+                                        <Input
+                                            value={form.name}
+                                            onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                                            placeholder="bijv. GPT-4 Productie"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                        <label className="text-xs font-medium">API-sleutel</label>
+                                        <Input
+                                            value={form.apiKey}
+                                            onChange={e => setForm(f => ({ ...f, apiKey: e.target.value }))}
+                                            placeholder="Azure OpenAI API-sleutel"
+                                            type="password"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                        <label className="text-xs font-medium">Endpoint-URL</label>
+                                        <Input
+                                            value={form.endpoint}
+                                            onChange={e => setForm(f => ({ ...f, endpoint: e.target.value }))}
+                                            placeholder="https://jouw-resource.openai.azure.com/"
+                                        />
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Button size="sm" onClick={handleSave} disabled={!form.name.trim() || !form.apiKey.trim()}>
+                                            Opslaan
+                                        </Button>
+                                        <Button size="sm" variant="bordered" onClick={handleCancel}>
+                                            Annuleren
+                                        </Button>
+                                    </div>
                                 </div>
-                                <Button
-                                    variant="default"
-                                    size="sm"
-                                    onClick={() => handleSave(apiKey.key, apiKey.value || '')}
-                                >
-                                    <span className="flex items-center gap-1">✓ Save</span>
-                                </Button>
-                            </>
-                        ) : (
-                            <>
-                                <div className="flex flex-1 items-center gap-2 rounded-md border px-3 py-1.5">
-                                    {apiKey.value ? (
-                                        <span className="flex-1">{getMaskedKey(apiKey.value)}</span>
-                                    ) : (
-                                        <span className="text-muted-foreground flex-1 text-sm">
-                                            Geen API-sleutel ingesteld
+                            ) : (
+                                <div className="border-border flex items-center gap-3 rounded-lg border px-3 py-2">
+                                    <div className="flex flex-1 flex-col gap-0.5 overflow-hidden">
+                                        <span className="text-sm font-medium">{key.name}</span>
+                                        <span className="text-muted-foreground truncate text-xs">
+                                            {getMaskedKey(key.apiKey)}
+                                            {key.endpoint && ` · ${key.endpoint}`}
                                         </span>
-                                    )}
+                                    </div>
+                                    <Button size="sm" variant="bordered" onClick={() => openEdit(key.id)}>
+                                        Wijzigen
+                                    </Button>
+                                    <Button
+                                        size="icon-sm"
+                                        variant="ghost"
+                                        className="text-red-500 hover:text-red-500"
+                                        onClick={() => removeKey(key.id)}
+                                    >
+                                        <IconTrash size={14} strokeWidth={2} />
+                                    </Button>
                                 </div>
-                                <Button
-                                    variant={'bordered'}
-                                    size="sm"
-                                    onClick={() => setIsEditing(apiKey.key)}
-                                >
-                                    {apiKey.value ? 'Sleutel wijzigen' : 'Sleutel toevoegen'}
-                                </Button>
-                            </>
-                        )}
+                            )}
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {editingId === 'new' ? (
+                <div className="border-border flex flex-col gap-3 rounded-lg border p-3">
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-xs font-medium">Naam (zichtbaar in dropdown)</label>
+                        <Input
+                            value={form.name}
+                            onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                            placeholder="bijv. GPT-4 Productie"
+                            autoFocus
+                        />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-xs font-medium">API-sleutel</label>
+                        <Input
+                            value={form.apiKey}
+                            onChange={e => setForm(f => ({ ...f, apiKey: e.target.value }))}
+                            placeholder="Azure OpenAI API-sleutel"
+                            type="password"
+                        />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-xs font-medium">Endpoint-URL</label>
+                        <Input
+                            value={form.endpoint}
+                            onChange={e => setForm(f => ({ ...f, endpoint: e.target.value }))}
+                            placeholder="https://jouw-resource.openai.azure.com/"
+                        />
+                    </div>
+                    <div className="flex gap-2">
+                        <Button size="sm" onClick={handleSave} disabled={!form.name.trim() || !form.apiKey.trim()}>
+                            Sleutel toevoegen
+                        </Button>
+                        <Button size="sm" variant="bordered" onClick={handleCancel}>
+                            Annuleren
+                        </Button>
                     </div>
                 </div>
-            ))}
+            ) : (
+                <Button variant="bordered" size="sm" className="self-start" onClick={openNew}>
+                    + Nieuwe sleutel toevoegen
+                </Button>
+            )}
         </div>
     );
 };
