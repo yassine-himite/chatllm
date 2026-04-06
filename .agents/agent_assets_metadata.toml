@@ -12,3 +12,15 @@ id = "P6otM5b_JSxazOmM7Uagb"
 uri = "file://twelo-ui-transfer.zip"
 type = "unspecified"
 title = "twelo-ui-transfer.zip — UI Transfer Package (322 KB)"
+
+[[outputs]]
+id = "hch8tcB-bKfwvXhlAXJ4X"
+uri = "file://screenshots/ui-design-guide.jpg"
+type = "image"
+title = "Color palette + Sign-in screen"
+
+[[outputs]]
+id = "euYW2jv2k4oJdnCKrKdPH"
+uri = "file://screenshots/ui-chat-views.jpg"
+type = "image"
+title = "Light mode home + Dark mode chat"
