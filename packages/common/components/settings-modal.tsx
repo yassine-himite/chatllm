@@ -1,4 +1,4 @@
-ng page 'use client';
+'use client';
 import { useAuthFull } from '@repo/common/context';
 import { useMcpToolsStore } from '@repo/common/store';
 import { Alert, AlertDescription, DialogFooter } from '@repo/ui';
