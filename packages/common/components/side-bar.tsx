@@ -1,8 +1,8 @@
 'use client';
-import { useClerk, useUser } from '@clerk/nextjs';
+import { useClerk, useUser } from '@repo/common/context';
 import { FullPageLoader, HistoryItem, Logo } from '@repo/common/components';
 import { useRootContext } from '@repo/common/context';
-import { useAppStore, useChatStore } from '@repo/common/store';
+import { SETTING_TABS, useAppStore, useChatStore } from '@repo/common/store';
 import { Thread } from '@repo/shared/types';
 import {
     Badge,
@@ -48,11 +48,12 @@ export const Sidebar = () => {
     };
 
     const { isSignedIn, user } = useUser();
-    const { openUserProfile, signOut, redirectToSignIn } = useClerk();
+    const { signOut } = useClerk();
     const clearAllThreads = useChatStore(state => state.clearAllThreads);
     const setIsSidebarOpen = useAppStore(state => state.setIsSidebarOpen);
     const isSidebarOpen = useAppStore(state => state.isSidebarOpen);
     const setIsSettingsOpen = useAppStore(state => state.setIsSettingsOpen);
+    const setSettingTab = useAppStore(state => state.setSettingTab);
     const { push } = useRouter();
     const { theme, setTheme } = useTheme();
 
@@ -366,7 +367,7 @@ export const Sidebar = () => {
                                     Instellingen
                                 </DropdownMenuItem>
                                 {isSignedIn && (
-                                    <DropdownMenuItem onClick={() => openUserProfile()}>
+                                    <DropdownMenuItem onClick={() => { setIsSettingsOpen(true); setSettingTab(SETTING_TABS.PROFILE); }}>
                                         <IconUser size={16} strokeWidth={2} />
                                         Profiel
                                     </DropdownMenuItem>

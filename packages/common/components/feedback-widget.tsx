@@ -1,4 +1,4 @@
-import { useAuth } from '@clerk/nextjs';
+import { useAuth } from '@repo/common/context';
 import { Button, Textarea } from '@repo/ui';
 import { IconCircleCheckFilled, IconHelpSmall, IconX } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -20,6 +20,8 @@ export const FeedbackWidget = () => {
         try {
             await fetch('/api/feedback', {
                 method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify({ feedback }),
             });
             setIsSuccess(true);

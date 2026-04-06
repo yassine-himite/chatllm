@@ -1,8 +1,9 @@
 'use client';
+import { useAuthFull } from '@repo/common/context';
 import { useMcpToolsStore } from '@repo/common/store';
 import { Alert, AlertDescription, DialogFooter } from '@repo/ui';
 import { Button } from '@repo/ui/src/components/button';
-import { IconBolt, IconBoltFilled, IconKey, IconSettings2, IconTrash } from '@tabler/icons-react';
+import { IconBolt, IconBoltFilled, IconKey, IconSettings2, IconTrash, IconUser } from '@tabler/icons-react';
 
 import { Badge, Dialog, DialogContent, Input } from '@repo/ui';
 
@@ -23,6 +24,12 @@ export const SettingsModal = () => {
 
     const settingMenu = [
         {
+            icon: <IconUser size={16} strokeWidth={2} className="text-muted-foreground" />,
+            title: 'Profiel',
+            key: SETTING_TABS.PROFILE,
+            component: <ProfileSettings />,
+        },
+        {
             icon: <IconSettings2 size={16} strokeWidth={2} className="text-muted-foreground" />,
             title: 'Aanpassen',
             key: SETTING_TABS.PERSONALIZATION,
@@ -40,11 +47,6 @@ export const SettingsModal = () => {
             key: SETTING_TABS.API_KEYS,
             component: <ApiKeySettings />,
         },
-        // {
-        //     title: 'MCP Tools',
-        //     key: SETTING_TABS.MCP_TOOLS,
-        //     component: <MCPSettings />,
-        // },
     ];
 
     return (
@@ -453,6 +455,145 @@ export const CreditsSettings = () => {
                         </div>
                     ))}
                 </div>
+            </div>
+        </div>
+    );
+};
+
+export const ProfileSettings = () => {
+    const { user, refetch, signOut } = useAuthFull();
+    const setIsSettingsOpen = useAppStore(state => state.setIsSettingsOpen);
+
+    const [name, setName] = useState(user?.name ?? '');
+    const [email, setEmail] = useState(user?.email ?? '');
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [saving, setSaving] = useState(false);
+    const [deleting, setDeleting] = useState(false);
+    const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+    if (!user) {
+        return (
+            <div className="flex flex-col gap-4">
+                <p className="text-muted-foreground text-sm">
+                    Je bent niet ingelogd. Log in om je profiel te bekijken.
+                </p>
+            </div>
+        );
+    }
+
+    const handleSave = async () => {
+        if (newPassword && newPassword !== confirmPassword) {
+            setMessage({ type: 'error', text: 'Wachtwoorden komen niet overeen' });
+            return;
+        }
+
+        setSaving(true);
+        setMessage(null);
+
+        try {
+            const res = await fetch('/api/auth/me', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    name: name !== user.name ? name : undefined,
+                    email: email !== user.email ? email : undefined,
+                    currentPassword: currentPassword || undefined,
+                    newPassword: newPassword || undefined,
+                }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                setMessage({ type: 'error', text: data.error || 'Bijwerken mislukt' });
+            } else {
+                setMessage({ type: 'success', text: 'Profiel bijgewerkt' });
+                setCurrentPassword('');
+                setNewPassword('');
+                setConfirmPassword('');
+                await refetch();
+            }
+        } catch {
+            setMessage({ type: 'error', text: 'Er is iets misgegaan' });
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!window.confirm('Weet je zeker dat je je account wilt verwijderen? Dit kan niet ongedaan worden gemaakt.')) return;
+
+        setDeleting(true);
+        try {
+            const res = await fetch('/api/auth/me', {
+                method: 'DELETE',
+                credentials: 'include',
+            });
+
+            if (res.ok) {
+                await signOut();
+                setIsSettingsOpen(false);
+            } else {
+                const data = await res.json();
+                setMessage({ type: 'error', text: data.error || 'Verwijderen mislukt' });
+            }
+        } catch {
+            setMessage({ type: 'error', text: 'Er is iets misgegaan' });
+        } finally {
+            setDeleting(false);
+        }
+    };
+
+    return (
+        <div className="flex flex-col gap-6">
+            <div className="flex flex-col">
+                <h2 className="text-base font-semibold">Profiel</h2>
+                <p className="text-muted-foreground text-xs">Beheer je accountinformatie</p>
+            </div>
+
+            {message && (
+                <Alert variant={message.type === 'success' ? 'default' : 'destructive'}>
+                    <AlertDescription className="text-sm">{message.text}</AlertDescription>
+                </Alert>
+            )}
+
+            <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-medium">Naam</label>
+                    <Input value={name} onChange={e => setName(e.target.value)} placeholder="Je naam" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-medium">E-mailadres</label>
+                    <Input value={email} onChange={e => setEmail(e.target.value)} placeholder="je@email.nl" type="email" />
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-3 border-t border-dashed pt-4">
+                <h3 className="text-sm font-semibold">Wachtwoord wijzigen</h3>
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-medium">Huidig wachtwoord</label>
+                    <Input value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} type="password" placeholder="••••••••" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-medium">Nieuw wachtwoord</label>
+                    <Input value={newPassword} onChange={e => setNewPassword(e.target.value)} type="password" placeholder="••••••••" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-medium">Bevestig nieuw wachtwoord</label>
+                    <Input value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} type="password" placeholder="••••••••" />
+                </div>
+            </div>
+
+            <div className="flex flex-row justify-between gap-2 border-t border-dashed pt-4">
+                <Button variant="destructive" size="sm" onClick={handleDelete} disabled={deleting}>
+                    {deleting ? 'Verwijderen...' : 'Account verwijderen'}
+                </Button>
+                <Button size="sm" onClick={handleSave} disabled={saving}>
+                    {saving ? 'Opslaan...' : 'Opslaan'}
+                </Button>
             </div>
         </div>
     );

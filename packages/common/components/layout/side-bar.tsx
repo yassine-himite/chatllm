@@ -1,24 +1,25 @@
-import { SignInButton, useAuth, UserButton } from '@clerk/nextjs';
+import { useAuth, useUser } from '@repo/common/context';
 import { FullPageLoader, HistoryItem } from '@repo/common/components';
 import { useRootContext } from '@repo/common/context';
 import { Thread, useAppStore, useChatStore } from '@repo/common/store';
 import { Button, cn, Flex } from '@repo/ui';
-import { IconArrowBarLeft, IconArrowBarRight, IconPlus, IconSearch } from '@tabler/icons-react';
+import { IconArrowBarLeft, IconArrowBarRight, IconPlus, IconSearch, IconUser } from '@tabler/icons-react';
 import moment from 'moment';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useParams, usePathname } from 'next/navigation';
 
 export const Sidebar = () => {
     const { threadId: currentThreadId } = useParams();
     const pathname = usePathname();
     const { setIsCommandSearchOpen } = useRootContext();
-    const { push } = useRouter();
     const isChatPage = pathname.startsWith('/chat');
     const threads = useChatStore(state => state.threads);
     const { isSignedIn } = useAuth();
+    const { user } = useUser();
+    const setIsSettingsOpen = useAppStore(state => state.setIsSettingsOpen);
     const sortThreads = (threads: Thread[], sortBy: 'createdAt') => {
         return [...threads].sort((a, b) => moment(b[sortBy]).diff(moment(a[sortBy])));
     };
-    const clearAllThreads = useChatStore(state => state.clearAllThreads);
     const setIsSidebarOpen = useAppStore(state => state.setIsSidebarOpen);
     const isSidebarOpen = useAppStore(state => state.isSidebarOpen);
 
@@ -86,23 +87,25 @@ export const Sidebar = () => {
                         size={isSidebarOpen ? 'sm' : 'icon'}
                         variant="bordered"
                         rounded="full"
-                        tooltip={isSidebarOpen ? undefined : 'New Thread'}
+                        tooltip={isSidebarOpen ? undefined : 'Nieuw gesprek'}
                         tooltipSide="right"
                         className={cn('relative w-full shadow-sm', 'justify-center')}
-                        onClick={() => !isChatPage && push('/chat')}
+                        onClick={() => !isChatPage && undefined}
                     >
-                        <IconPlus
-                            size={16}
-                            strokeWidth={2}
-                            className={cn(isSidebarOpen && 'absolute left-2')}
-                        />
-                        {isSidebarOpen && 'New'}
+                        <Link href="/chat" className="flex items-center gap-2">
+                            <IconPlus
+                                size={16}
+                                strokeWidth={2}
+                                className={cn(isSidebarOpen && 'absolute left-2')}
+                            />
+                            {isSidebarOpen && 'Nieuw'}
+                        </Link>
                     </Button>
                     <Button
                         size={isSidebarOpen ? 'sm' : 'icon'}
                         variant="secondary"
                         rounded="full"
-                        tooltip={isSidebarOpen ? undefined : 'Search'}
+                        tooltip={isSidebarOpen ? undefined : 'Zoeken'}
                         tooltipSide="right"
                         className={cn('relative w-full', 'justify-center')}
                         onClick={() => setIsCommandSearchOpen(true)}
@@ -112,7 +115,7 @@ export const Sidebar = () => {
                             strokeWidth={2}
                             className={cn(isSidebarOpen && 'absolute left-2')}
                         />
-                        {isSidebarOpen && 'Search'}
+                        {isSidebarOpen && 'Zoeken'}
                     </Button>
                 </Flex>
 
@@ -127,11 +130,11 @@ export const Sidebar = () => {
                             isSidebarOpen ? 'flex' : 'hidden'
                         )}
                     >
-                        {renderGroup('Today', groupedThreads.today)}
-                        {renderGroup('Yesterday', groupedThreads.yesterday)}
-                        {renderGroup('Last 7 Days', groupedThreads.last7Days)}
-                        {renderGroup('Last 30 Days', groupedThreads.last30Days)}
-                        {renderGroup('Previous Months', groupedThreads.previousMonths)}
+                        {renderGroup('Vandaag', groupedThreads.today)}
+                        {renderGroup('Gisteren', groupedThreads.yesterday)}
+                        {renderGroup('Afgelopen 7 dagen', groupedThreads.last7Days)}
+                        {renderGroup('Afgelopen 30 dagen', groupedThreads.last30Days)}
+                        {renderGroup('Vorige maanden', groupedThreads.previousMonths)}
                     </Flex>
                 )}
 
@@ -148,9 +151,9 @@ export const Sidebar = () => {
                                 size={isSidebarOpen ? 'sm' : 'icon'}
                                 onClick={() => setIsSidebarOpen(prev => !prev)}
                                 className={cn(!isSidebarOpen && 'mx-auto')}
-                                tooltip="Close Sidebar"
+                                tooltip="Zijbalk sluiten"
                             >
-                                <IconArrowBarLeft size={16} strokeWidth={2} /> Close
+                                <IconArrowBarLeft size={16} strokeWidth={2} /> Sluiten
                             </Button>
                         </Flex>
                     )}
@@ -166,23 +169,27 @@ export const Sidebar = () => {
                     )}
                     <div className="sticky right-0 top-0 z-50 flex items-center gap-1 px-4 py-2">
                         {isSignedIn ? (
-                            <UserButton
-                                showName
-                                appearance={{
-                                    elements: {
-                                        avatarBox:
-                                            'size-6 bg-muted-foreground border border-border',
-                                        userButtonAvatarBox: 'bg-muted-foreground',
-                                        userPreviewAvatarIcon: 'bg-muted-foreground',
-                                    },
-                                }}
-                            />
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="gap-2"
+                                onClick={() => setIsSettingsOpen(true)}
+                            >
+                                <div className="bg-brand flex size-6 items-center justify-center rounded-full">
+                                    <IconUser size={14} strokeWidth={2} className="text-white" />
+                                </div>
+                                {isSidebarOpen && (
+                                    <span className="line-clamp-1 text-sm font-medium">
+                                        {user?.fullName}
+                                    </span>
+                                )}
+                            </Button>
                         ) : (
-                            <SignInButton mode="modal">
+                            <Link href="/sign-in">
                                 <Button variant="default" size="sm" rounded="full">
-                                    Log in
+                                    Inloggen
                                 </Button>
-                            </SignInButton>
+                            </Link>
                         )}
                     </div>
                 </Flex>

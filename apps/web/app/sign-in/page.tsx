@@ -1,20 +1,22 @@
 'use client';
 
-import { useAuth, useSignIn } from '@clerk/nextjs';
+import { useAuth } from '@repo/common/context';
 import { CustomSignIn } from '@repo/common/components';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
-export default function OauthSignIn() {
-    const { signIn } = useSignIn();
+export default function SignInPage() {
     const { isSignedIn, isLoaded } = useAuth();
     const router = useRouter();
-    if (!signIn) return null;
 
-    if (isSignedIn) {
-        router.push('/chat');
-    }
+    useEffect(() => {
+        if (isLoaded && isSignedIn) {
+            router.push('/chat');
+        }
+    }, [isLoaded, isSignedIn, router]);
 
     if (!isLoaded) return null;
+    if (isSignedIn) return null;
 
     return (
         <div className="bg-secondary/95 fixed inset-0 z-[100] flex h-full w-full flex-col items-center justify-center gap-2 backdrop-blur-sm">

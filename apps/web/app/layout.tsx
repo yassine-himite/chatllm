@@ -1,4 +1,4 @@
-import { ClerkProvider } from '@clerk/nextjs';
+import { AuthProvider } from '@repo/common/context';
 import { RootLayout } from '@repo/common/components';
 import { ReactQueryProvider, RootProvider } from '@repo/common/context';
 import { TooltipProvider, cn } from '@repo/ui';
@@ -90,21 +90,15 @@ export default function ParentLayout({
 }>) {
     return (
         <html
-            lang="en"
+            lang="nl"
             className={cn(GeistMono.variable, inter.variable, clash.variable, bricolage.variable)}
             suppressHydrationWarning
         >
             <head>
                 <link rel="icon" href="/favicon.ico" sizes="any" />
-
-                {/* <script
-                    crossOrigin="anonymous"
-                    src="//unpkg.com/react-scan/dist/auto.global.js"
-                ></script> */}
             </head>
             <body>
-                {/* <PostHogProvider> */}
-                <ClerkProvider>
+                <AuthProvider>
                     <RootProvider>
                         <ThemeProvider
                             attribute="class"
@@ -119,8 +113,7 @@ export default function ParentLayout({
                         </TooltipProvider>
                         </ThemeProvider>
                     </RootProvider>
-                </ClerkProvider>
-                {/* </PostHogProvider> */}
+                </AuthProvider>
             </body>
         </html>
     );

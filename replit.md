@@ -34,6 +34,28 @@ Port 5000, bound to 0.0.0.0 for Replit compatibility.
 - Dev/start scripts updated to use `-p 5000 -H 0.0.0.0`
 - `next` binary is in root `node_modules/.bin/` (not in `apps/web/node_modules`)
 
+## Authentication
+
+Custom-built email + password auth system (no Clerk):
+- **Session tokens**: Random 48-char tokens stored in `Session` DB table; set as `twelo_session` httpOnly cookie (30-day expiry)
+- **Password hashing**: `bcryptjs` with cost factor 12
+- **API routes**:
+  - `POST /api/auth/register` — create account
+  - `POST /api/auth/login` — log in
+  - `POST /api/auth/logout` — log out
+  - `GET /api/auth/me` — get current user
+  - `PATCH /api/auth/me` — update name/email/password
+  - `DELETE /api/auth/me` — delete account
+- **Server-side session**: `getServerSession()` in `apps/web/lib/auth.ts` reads cookie + queries DB
+- **Client-side**: `AuthProvider` in `packages/common/context/auth-context.tsx` with `useAuth()`, `useUser()`, `useClerk()` drop-in replacements
+- **User management**: "Profiel" tab in settings modal for name/email/password/delete
+
+## Database Schema (Prisma)
+
+- `User` — id, email (unique), name, password (hashed), createdAt, updatedAt
+- `Session` — id, userId (FK→User), token (unique), expiresAt, createdAt
+- `Feedback` — id, userId, feedback, metadata, createdAt
+
 ## Required Environment Variables
 
 - `DATABASE_URL` — PostgreSQL connection string (Prisma)
@@ -42,10 +64,6 @@ Port 5000, bound to 0.0.0.0 for Replit compatibility.
 - `FREE_CREDITS_LIMIT_REQUESTS_AUTH` — Rate limit for authenticated users
 - `FREE_CREDITS_LIMIT_REQUESTS_IP` — Rate limit per IP
 
-### Auth (Clerk)
-- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
-- `CLERK_SECRET_KEY`
-
-### Supabase
+### Supabase (optional, used for storage)
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`

@@ -1,4 +1,4 @@
-import { useUser } from '@clerk/nextjs';
+import { useUser } from '@repo/common/context';
 import { cn, Dialog, DialogContent } from '@repo/ui';
 import { IconCircleCheckFilled } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';

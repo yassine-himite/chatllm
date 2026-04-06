@@ -1,7 +1,6 @@
-import { auth } from '@clerk/nextjs/server';
 import { CHAT_MODE_CREDIT_COSTS, ChatModeConfig } from '@repo/shared/config';
-import { Geo, geolocation } from '@vercel/functions';
 import { NextRequest } from 'next/server';
+import { getServerSession } from '../../../lib/auth';
 import {
     DAILY_CREDITS_AUTH,
     DAILY_CREDITS_IP,
@@ -12,14 +11,20 @@ import { executeStream, sendMessage } from './stream-handlers';
 import { completionRequestSchema, SSE_HEADERS } from './types';
 import { getIp } from './utils';
 
+type Geo = { city?: string; country?: string; region?: string; latitude?: string; longitude?: string };
+
+function getGeo(_request: NextRequest): Geo {
+    return {};
+}
+
 export async function POST(request: NextRequest) {
     if (request.method === 'OPTIONS') {
         return new Response(null, { headers: SSE_HEADERS });
     }
 
     try {
-        const session = await auth();
-        const userId = session?.userId ?? undefined;
+        const session = await getServerSession();
+        const userId = session?.id ?? undefined;
 
         const parsed = await request.json().catch(() => ({}));
         const validatedBody = completionRequestSchema.safeParse(parsed);
@@ -45,14 +50,10 @@ export async function POST(request: NextRequest) {
             });
         }
 
-        console.log('ip', ip);
-
         const remainingCredits = await getRemainingCredits({
             userId: userId ?? undefined,
             ip,
         });
-
-        console.log('remainingCredits', remainingCredits, creditCost, process.env.NODE_ENV);
 
         if (!!ChatModeConfig[data.mode]?.isAuthRequired && !userId) {
             return new Response(JSON.stringify({ error: 'Authentication required' }), {
@@ -77,16 +78,13 @@ export async function POST(request: NextRequest) {
                 : DAILY_CREDITS_IP.toString(),
         };
 
-        const encoder = new TextEncoder();
         const abortController = new AbortController();
 
         request.signal.addEventListener('abort', () => {
             abortController.abort();
         });
 
-        const gl = geolocation(request);
-
-        console.log('gl', gl);
+        const gl = getGeo(request);
 
         const stream = createCompletionStream({
             data,
@@ -138,9 +136,6 @@ function createCompletionStream({
                     gl,
                     userId: userId ?? undefined,
                     onFinish: async () => {
-                        // if (process.env.NODE_ENV === 'development') {
-                        //     return;
-                        // }
                         const creditCost =
                             CHAT_MODE_CREDIT_COSTS[
                                 data.mode as keyof typeof CHAT_MODE_CREDIT_COSTS
@@ -156,7 +151,6 @@ function createCompletionStream({
                 });
             } catch (error) {
                 if (abortController.signal.aborted) {
-                    console.log('abortController.signal.aborted');
                     sendMessage(controller, encoder, {
                         type: 'done',
                         status: 'aborted',
@@ -165,7 +159,6 @@ function createCompletionStream({
                         parentThreadItemId: data.parentThreadItemId,
                     });
                 } else {
-                    console.log('sending error message');
                     sendMessage(controller, encoder, {
                         type: 'done',
                         status: 'error',
@@ -183,7 +176,6 @@ function createCompletionStream({
             }
         },
         cancel() {
-            console.log('cancelling stream');
             abortController.abort();
         },
     });

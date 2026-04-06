@@ -1,8 +1,12 @@
-import { AuthenticateWithRedirectCallback } from '@clerk/nextjs';
+'use client';
 
-export default function Page() {
-    // Handle the redirect flow by calling the Clerk.handleRedirectCallback() method
-    // or rendering the prebuilt <AuthenticateWithRedirectCallback/> component.
-    // This is the final step in the custom OAuth flow.
-    return <AuthenticateWithRedirectCallback />;
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
+export default function SSOCallback() {
+    const router = useRouter();
+    useEffect(() => {
+        router.replace('/sign-in');
+    }, [router]);
+    return null;
 }

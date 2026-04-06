@@ -1,381 +1,147 @@
-import { useSignIn, useSignUp } from '@clerk/nextjs';
-import { isClerkAPIResponseError } from '@clerk/nextjs/errors';
-import { Button, InputOTP, InputOTPGroup, InputOTPSlot } from '@repo/ui';
+'use client';
+
+import { useAuthFull } from '@repo/common/context';
+import { Button, Input } from '@repo/ui';
 import { IconX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { FaGithub, FaGoogle } from 'react-icons/fa';
+import { Logo } from './logo';
+
 type CustomSignInProps = {
     redirectUrl?: string;
     onClose?: () => void;
 };
 
-export const CustomSignIn = ({
-    redirectUrl = '/sign-in/sso-callback',
-    onClose,
-}: CustomSignInProps) => {
-    const [isLoading, setIsLoading] = useState<string | null>(null);
-    const [email, setEmail] = useState('');
-    const [error, setError] = useState('');
-    const [verifying, setVerifying] = useState(false);
-    const { signIn, isLoaded, setActive } = useSignIn();
-    const { signUp, isLoaded: isSignUpLoaded } = useSignUp();
-    const [code, setCode] = useState('');
-    const [resending, setResending] = useState(false);
-    if (!isSignUpLoaded || !isLoaded) return null;
+export const CustomSignIn = ({ onClose }: CustomSignInProps) => {
+    const { refetch } = useAuthFull();
     const router = useRouter();
 
-    const handleVerify = async () => {
-        // Check if code is complete
-        if (code.length !== 6) {
-            setError('Please enter the complete 6-digit code');
-            return;
-        }
+    const [mode, setMode] = useState<'login' | 'register'>('login');
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
 
-        setIsLoading('verify');
-        try {
-            if (!isLoaded || !signIn) return;
-            const result = await signUp.attemptEmailAddressVerification({
-                code,
-            });
-
-            if (result.status === 'complete') {
-                setActive({ session: result.createdSessionId });
-                router.push('/chat');
-            }
-        } catch (error: any) {
-            console.log(error.errors);
-            if (error.errors && error.errors.some((e: any) => e.code === 'client_state_invalid')) {
-                try {
-                    const result = await signIn.attemptFirstFactor({
-                        strategy: 'email_code',
-                        code,
-                    });
-
-                    if (result.status === 'complete') {
-                        setActive({ session: result.createdSessionId });
-                        router.push('/chat');
-                    }
-                } catch (error) {
-                    if (isClerkAPIResponseError(error)) {
-                        console.log(error);
-                    }
-
-                    console.error('Sign-in error:', error);
-                    setError('Something went wrong while signing in. Please try again.');
-                }
-            } else {
-                console.error('Verification error:', error);
-            }
-        } finally {
-            setIsLoading(null);
-        }
-    };
-
-    const handleGoogleAuth = async () => {
-        setIsLoading('google');
-
-        try {
-            if (!isLoaded || !signIn) return;
-            await signIn.authenticateWithRedirect({
-                strategy: 'oauth_google',
-                redirectUrl,
-                redirectUrlComplete: redirectUrl,
-            });
-        } catch (error) {
-            console.error('Google authentication error:', error);
-        } finally {
-            setIsLoading(null);
-        }
-    };
-
-    const handleGithubAuth = async () => {
-        setIsLoading('github');
-
-        try {
-            if (!isLoaded || !signIn) return;
-            await signIn.authenticateWithRedirect({
-                strategy: 'oauth_github',
-                redirectUrl,
-                redirectUrlComplete: redirectUrl,
-            });
-        } catch (error) {
-            console.error('GitHub authentication error:', error);
-        } finally {
-            setIsLoading(null);
-        }
-    };
-
-    const handleAppleAuth = async () => {
-        setIsLoading('apple');
-
-        try {
-            if (!isLoaded || !signIn) return;
-            await signIn.authenticateWithRedirect({
-                strategy: 'oauth_apple',
-                redirectUrl,
-                redirectUrlComplete: redirectUrl,
-            });
-        } catch (error) {
-            console.error('Apple authentication error:', error);
-        } finally {
-            setIsLoading(null);
-        }
-    };
-
-    const validateEmail = (email: string) => {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return regex.test(email);
-    };
-
-    const handleEmailAuth = async () => {
-        setIsLoading('email');
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         setError('');
-
-        if (!email) {
-            setError('Email is required');
-            setIsLoading(null);
-            return;
-        } else if (!validateEmail(email)) {
-            setError('Please enter a valid email');
-            setIsLoading(null);
-            return;
-        }
+        setIsLoading(true);
 
         try {
-            // Try signing up the user first
-            await signUp.create({ emailAddress: email });
+            const endpoint = mode === 'login' ? '/api/auth/login' : '/api/auth/register';
+            const body = mode === 'login' ? { email, password } : { name, email, password };
 
-            // If sign-up is successful, send the magic link
-            const protocol = window.location.protocol;
-            const host = window.location.host;
-            const fullRedirectUrl = `${protocol}//${host}${redirectUrl}`;
-
-            await signUp.prepareEmailAddressVerification({
-                strategy: 'email_code',
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(body),
             });
 
-            setVerifying(true);
-        } catch (error: any) {
-            if (
-                error.errors &&
-                error.errors.some((e: any) => e.code === 'form_identifier_exists')
-            ) {
-                try {
-                    // If the user already exists, sign them in instead
-                    const signInAttempt = await signIn.create({
-                        identifier: email,
-                    });
+            const data = await res.json();
 
-                    console.log(signInAttempt);
-
-                    // Get the email address ID from the response and prepare the magic link
-                    const emailAddressIdObj: any = signInAttempt?.supportedFirstFactors?.find(
-                        (factor: any) => factor.strategy === 'email_code'
-                    );
-
-                    const emailAddressId: any = emailAddressIdObj?.emailAddressId || '';
-
-                    if (emailAddressId) {
-                        await signIn.prepareFirstFactor({
-                            strategy: 'email_code',
-                            emailAddressId,
-                        });
-
-                        setVerifying(true);
-                    } else {
-                        throw new Error('Email address ID not found');
-                    }
-                } catch (error: any) {
-                    console.log(error.message);
-                    if (error.includes('Incorrect code')) {
-                        setError('Incorrect code. Please try again.');
-                    } else {
-                        console.error('Sign-in error:', error);
-                        setError('Something went wrong while signing in. Please try again.');
-                    }
-                }
-            } else {
-                console.error('Authentication error:', error);
-                setError(
-                    error?.errors?.[0]?.longMessage || 'Authentication failed. Please try again.'
-                );
+            if (!res.ok) {
+                setError(data.error || 'Er is iets misgegaan');
+                return;
             }
+
+            await refetch();
+            onClose?.();
+            router.push('/chat');
+        } catch {
+            setError('Er is iets misgegaan. Probeer het opnieuw.');
         } finally {
-            setIsLoading(null);
+            setIsLoading(false);
         }
     };
-
-    const handleSendCode = async () => {
-        // Don't proceed if already resending
-        if (resending) return;
-
-        // Check if email is available
-        if (!email) {
-            setError('Email is missing. Please try again.');
-            return;
-        }
-
-        setResending(true);
-        setError('');
-
-        try {
-            // First try with signUp flow
-            await signUp.prepareEmailAddressVerification({
-                strategy: 'email_code',
-            });
-
-            // Show a success message
-            setError('');
-        } catch (error: any) {
-            // If error, try with signIn flow
-            if (error.errors && error.errors.some((e: any) => e.code === 'client_state_invalid')) {
-                try {
-                    const signInAttempt = await signIn.create({
-                        identifier: email,
-                    });
-
-                    const emailAddressIdObj: any = signInAttempt?.supportedFirstFactors?.find(
-                        (factor: any) => factor.strategy === 'email_code'
-                    );
-
-                    const emailAddressId: any = emailAddressIdObj?.emailAddressId || '';
-
-                    if (emailAddressId) {
-                        await signIn.prepareFirstFactor({
-                            strategy: 'email_code',
-                            emailAddressId,
-                        });
-                    } else {
-                        throw new Error('Email address ID not found');
-                    }
-                } catch (error) {
-                    if (isClerkAPIResponseError(error)) {
-                        console.error('Error resending code:', error);
-                    }
-                    setError('Failed to resend code. Please try again.');
-                }
-            } else {
-                console.error('Error resending code:', error);
-                setError('Failed to resend code. Please try again.');
-            }
-        } finally {
-            // Wait a moment before allowing another resend (to prevent spam)
-            setTimeout(() => {
-                setResending(false);
-            }, 3000);
-        }
-    };
-
-    if (verifying) {
-        return (
-            <div className="flex w-[300px] flex-col items-center gap-4">
-                <div className="flex flex-col items-center gap-1">
-                    <h2 className="font-clash text-foreground !text-brand text-center text-[24px] font-semibold leading-tight">
-                        Controleer je e-mail
-                    </h2>
-                    <p className="text-muted-foreground text-center text-sm">
-                        We hebben een code naar je e-mail gestuurd. Controleer je inbox en voer de
-                        code in om verder te gaan.
-                    </p>
-                </div>
-                <InputOTP
-                    maxLength={6}
-                    autoFocus
-                    value={code}
-                    onChange={setCode}
-                    onComplete={handleVerify}
-                >
-                    <InputOTPGroup>
-                        <InputOTPSlot index={0} />
-                        <InputOTPSlot index={1} />
-                        <InputOTPSlot index={2} />
-                        <InputOTPSlot index={3} />
-                        <InputOTPSlot index={4} />
-                        <InputOTPSlot index={5} />
-                    </InputOTPGroup>
-                </InputOTP>
-                <p className="text-muted-foreground text-center text-sm">
-                    Geen e-mail ontvangen?{' '}
-                    <span
-                        className={`hover:text-brand text-brand cursor-pointer underline ${
-                            resending ? 'pointer-events-none opacity-70' : ''
-                        }`}
-                        onClick={handleSendCode}
-                    >
-                        {resending ? 'Verzenden...' : 'Code opnieuw sturen'}
-                    </span>
-                </p>
-
-                <div id="clerk-captcha"></div>
-                <div className="text-muted-foreground text-center text-sm">
-                    {error && <p className="text-rose-400">{error}</p>}
-                    {resending && <p className="text-brand">Verificatiecode wordt verstuurd...</p>}
-                </div>
-            </div>
-        );
-    }
 
     return (
-        <>
+        <div className="relative flex w-[360px] flex-col items-center gap-6 rounded-2xl bg-background p-8 shadow-lg">
             <Button
-                onClick={() => {
-                    onClose?.();
-                }}
+                onClick={() => onClose?.()}
                 variant="ghost"
                 size="icon-sm"
-                className="absolute right-2 top-2"
+                className="absolute right-3 top-3"
             >
                 <IconX className="h-4 w-4" />
             </Button>
-            <div className="flex w-[320px] flex-col items-center gap-8">
-                <h2 className="text-muted-foreground/70 text-center text-[24px] font-semibold leading-tight">
-                    Meld je aan voor <br /> geavanceerde onderzoekstools
+
+            <div className="flex flex-col items-center gap-2">
+                <Logo className="text-brand size-8" />
+                <h2 className="font-clash text-foreground text-center text-2xl font-bold">
+                    {mode === 'login' ? 'Welkom terug' : 'Account aanmaken'}
                 </h2>
-
-                <div className="flex w-[300px] flex-col space-y-1.5">
-                    <Button
-                        onClick={handleGoogleAuth}
-                        disabled={isLoading === 'google'}
-                        variant="bordered"
-                    >
-                        {isLoading === 'google' ? (
-                            <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                        ) : (
-                            <FaGoogle className=" size-3" />
-                        )}
-                        {isLoading === 'google' ? 'Authenticeren...' : 'Doorgaan met Google'}
-                    </Button>
-
-                    <Button
-                        onClick={handleGithubAuth}
-                        disabled={isLoading === 'github'}
-                        variant="bordered"
-                    >
-                        {isLoading === 'github' ? (
-                            <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                        ) : (
-                            <FaGithub className=" size-3" />
-                        )}
-                        {isLoading === 'github' ? 'Authenticeren...' : 'Doorgaan met GitHub'}
-                    </Button>
-                </div>
-                <div className="text-muted-foreground/50 w-full text-center text-xs">
-                    <span className="text-muted-foreground/50">
-                        Door deze app te gebruiken, ga je akkoord met de{' '}
-                    </span>
-                    <a href="/terms" className="hover:text-foreground underline">
-                        Servicevoorwaarden
-                    </a>{' '}
-                    en het{' '}
-                    <a href="/privacy" className="hover:text-foreground underline">
-                        Privacybeleid
-                    </a>
-                </div>
-                <Button variant="ghost" size="sm" className="w-full" onClick={onClose}>
-                    Sluiten
-                </Button>
+                <p className="text-muted-foreground text-center text-sm">
+                    {mode === 'login'
+                        ? 'Log in op je twelo.ai account'
+                        : 'Registreer voor geavanceerde AI-tools'}
+                </p>
             </div>
-        </>
+
+            <form onSubmit={handleSubmit} className="flex w-full flex-col gap-3">
+                {mode === 'register' && (
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-sm font-medium">Naam</label>
+                        <Input
+                            value={name}
+                            onChange={e => setName(e.target.value)}
+                            placeholder="Je volledige naam"
+                            required
+                        />
+                    </div>
+                )}
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-medium">E-mailadres</label>
+                    <Input
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        type="email"
+                        placeholder="je@email.nl"
+                        required
+                    />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-medium">Wachtwoord</label>
+                    <Input
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        type="password"
+                        placeholder="Minimaal 8 tekens"
+                        required
+                        minLength={8}
+                    />
+                </div>
+
+                {error && <p className="text-sm text-red-500">{error}</p>}
+
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading
+                        ? 'Bezig...'
+                        : mode === 'login'
+                          ? 'Inloggen'
+                          : 'Account aanmaken'}
+                </Button>
+            </form>
+
+            <div className="flex flex-col items-center gap-2 text-sm">
+                <p className="text-muted-foreground">
+                    {mode === 'login' ? 'Nog geen account?' : 'Al een account?'}{' '}
+                    <button
+                        type="button"
+                        className="text-brand font-medium hover:underline"
+                        onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); }}
+                    >
+                        {mode === 'login' ? 'Registreren' : 'Inloggen'}
+                    </button>
+                </p>
+                <p className="text-muted-foreground/60 text-center text-xs">
+                    Door verder te gaan ga je akkoord met de{' '}
+                    <a href="/terms" className="hover:text-foreground underline">Servicevoorwaarden</a>
+                    {' '}en het{' '}
+                    <a href="/privacy" className="hover:text-foreground underline">Privacybeleid</a>
+                </p>
+            </div>
+        </div>
     );
 };
