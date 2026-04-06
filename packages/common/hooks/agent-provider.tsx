@@ -440,7 +440,7 @@ export const AgentProvider = ({ children }: { children: ReactNode }) => {
                     customInstructions,
                     parentThreadItemId: '',
                     webSearch: useWebSearch,
-                    showSuggestions: showSuggestions ?? true,
+                    showSuggestions: showSuggestions ?? false,
                     ...(azureKey ? {
                         azureApiKey: azureKey.apiKey,
                         azureEndpoint: azureKey.endpoint,

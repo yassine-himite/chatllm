@@ -136,6 +136,7 @@ function createCompletionStream({
                     gl,
                     userId: userId ?? undefined,
                     onFinish: async () => {
+                        if (DAILY_CREDITS_AUTH === 0 && DAILY_CREDITS_IP === 0) return;
                         const creditCost =
                             CHAT_MODE_CREDIT_COSTS[
                                 data.mode as keyof typeof CHAT_MODE_CREDIT_COSTS

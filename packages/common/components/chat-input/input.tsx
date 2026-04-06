@@ -64,8 +64,14 @@ export const ChatInput = ({
     const stopGeneration = useChatStore(state => state.stopGeneration);
     const hasTextInput = !!editor?.getText();
     const { dropzonProps, handleImageUpload } = useImageAttachment();
-    const { push } = useRouter();
+    const { push, prefetch } = useRouter();
     const chatMode = useChatStore(state => state.chatMode);
+
+    useEffect(() => {
+        if (!currentThreadId) {
+            prefetch('/chat/warmup');
+        }
+    }, [currentThreadId, prefetch]);
     const sendMessage = async () => {
         if (
             !isSignedIn &&

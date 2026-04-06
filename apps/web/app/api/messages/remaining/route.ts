@@ -8,6 +8,13 @@ import {
 import { getIp } from '../../completion/utils';
 
 export async function GET(request: NextRequest) {
+    if (DAILY_CREDITS_AUTH === 0 && DAILY_CREDITS_IP === 0) {
+        return NextResponse.json(
+            { remaining: 9999, maxLimit: 9999, reset: new Date(getNextResetTime()).toISOString(), isAuthenticated: true },
+            { headers: { 'Cache-Control': 'public, max-age=60' } }
+        );
+    }
+
     const session = await getServerSession();
     const userId = session?.id ?? undefined;
     const ip = getIp(request);
