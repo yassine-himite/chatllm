@@ -1,5 +1,3 @@
-import { withSentryConfig } from '@sentry/nextjs';
-
 const nextConfig = {
     transpilePackages: ['next-mdx-remote'],
     images: {
@@ -17,7 +15,6 @@ const nextConfig = {
         if (!options.isServer) {
             config.resolve.fallback = { fs: false, module: false, path: false };
         }
-        // Experimental features
         config.experiments = {
             ...config.experiments,
             topLevelAwait: true,
@@ -31,13 +28,4 @@ const nextConfig = {
     },
 };
 
-export default withSentryConfig(nextConfig, {
-    // Sentry configuration (unchanged)
-    org: 'saascollect',
-    project: 'javascript-nextjs',
-    silent: !process.env.CI,
-    widenClientFileUpload: true,
-    hideSourceMaps: true,
-    disableLogger: true,
-    automaticVercelMonitors: true,
-});
+export default nextConfig;

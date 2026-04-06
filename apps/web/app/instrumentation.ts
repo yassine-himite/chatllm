@@ -1,9 +1,2 @@
-export async function register() {
-  if (process.env.NEXT_RUNTIME === 'nodejs') {
-    await import('../sentry.server.config');
-  }
-
-  if (process.env.NEXT_RUNTIME === 'edge') {
-    await import('../sentry.edge.config');
-  }
-}
+// Sentry instrumentation disabled for Replit compatibility — re-enable if deploying to Vercel with SENTRY_DSN set
+export async function register() {}
