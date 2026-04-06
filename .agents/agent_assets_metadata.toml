@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "ybF9kaGOEcrexDihtqtSS"
+uri = "file://twelo-ui-transfer.tar.gz"
+type = "unspecified"
+title = "twelo-ui-transfer.tar.gz — UI Transfer Package (56 KB)"
