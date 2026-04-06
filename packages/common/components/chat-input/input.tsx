@@ -259,7 +259,7 @@ export const ChatInput = ({
                     {!currentThreadId && showGreeting && <ExamplePrompts />}
 
                     {currentThreadId && (
-                        <p className="text-muted-foreground mt-2 w-full text-center text-[11px] opacity-50">
+                        <p className="text-muted-foreground mt-4 w-full text-center text-[11px] opacity-50">
                             Twelo.ai kan fouten maken. Controleer belangrijke informatie altijd.
                         </p>
                     )}
