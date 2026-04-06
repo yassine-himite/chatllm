@@ -1,5 +1,5 @@
 'use client';
-import { useAuth } from '@repo/common/context';
+import { useAuth, useUser } from '@repo/common/context';
 import {
     ImageAttachment,
     ImageDropzoneRoot,
@@ -31,6 +31,8 @@ export const ChatInput = ({
     isFollowUp?: boolean;
 }) => {
     const { isSignedIn } = useAuth();
+    const { user } = useUser();
+    const firstName = user?.firstName || user?.name?.split(' ')[0] || '';
 
     const { threadId: currentThreadId } = useParams();
     const { editor } = useChatEditor({
@@ -243,7 +245,7 @@ export const ChatInput = ({
                             transition={{ duration: 0.3, ease: 'easeOut' }}
                             className="mb-4 flex w-full flex-col items-center gap-1"
                         >
-                            <AnimatedTitles />
+                            <AnimatedTitles firstName={firstName} />
                         </motion.div>
                     )}
 
@@ -259,9 +261,10 @@ export const ChatInput = ({
 
 type AnimatedTitlesProps = {
     titles?: string[];
+    firstName?: string;
 };
 
-const AnimatedTitles = ({ titles = [] }: AnimatedTitlesProps) => {
+const AnimatedTitles = ({ titles = [], firstName = '' }: AnimatedTitlesProps) => {
     const [greeting, setGreeting] = React.useState<string>('');
 
     React.useEffect(() => {
@@ -307,7 +310,7 @@ const AnimatedTitles = ({ titles = [] }: AnimatedTitlesProps) => {
                     }}
                     className="from-muted-foreground/50 via-muted-foreground/40 to-muted-foreground/20 bg-gradient-to-r bg-clip-text text-center text-[32px] font-semibold tracking-tight text-transparent"
                 >
-                    {greeting}
+                    {greeting}{firstName ? ` ${firstName}` : ''}
                 </motion.h1>
             </AnimatePresence>
         </Flex>
