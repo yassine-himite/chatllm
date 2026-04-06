@@ -3,7 +3,7 @@ import Link from 'next/link';
 export const Footer = () => {
     const links = [
         {
-            href: 'https://git.new/llmchat',
+            href: 'https://github.com',
             label: 'Star us on GitHub',
         },
         {

@@ -19,16 +19,19 @@ import {
     IconArrowBarRight,
     IconCommand,
     IconLogout,
+    IconMoon,
     IconPinned,
     IconPlus,
     IconSearch,
     IconSelector,
     IconSettings,
     IconSettings2,
+    IconSun,
     IconUser,
 } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import moment from 'moment';
+import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 
@@ -51,6 +54,12 @@ export const Sidebar = () => {
     const isSidebarOpen = useAppStore(state => state.isSidebarOpen);
     const setIsSettingsOpen = useAppStore(state => state.setIsSettingsOpen);
     const { push } = useRouter();
+    const { theme, setTheme } = useTheme();
+
+    const toggleTheme = () => {
+        setTheme(theme === 'dark' ? 'light' : 'dark');
+    };
+
     const groupedThreads: Record<string, Thread[]> = {
         today: [],
         yesterday: [],
@@ -142,7 +151,7 @@ export const Sidebar = () => {
                             <Logo className="text-brand size-5" />
                             {isSidebarOpen && (
                                 <p className="font-clash text-foreground text-lg font-bold tracking-wide">
-                                    llmchat.co
+                                    twelo.ai
                                 </p>
                             )}
                         </motion.div>
@@ -236,24 +245,6 @@ export const Sidebar = () => {
                         !isSidebarOpen && 'items-center justify-center px-0'
                     )}
                 >
-                    {/* <Link href="/recent" className={isSidebarOpen ? 'w-full' : ''}>
-                        <Button
-                            size={isSidebarOpen ? 'xs' : 'icon-sm'}
-                            variant="bordered"
-                            rounded="lg"
-                            tooltip={isSidebarOpen ? undefined : 'Recent'}
-                            tooltipSide="right"
-                            className={cn(
-                                'text-muted-foreground w-full justify-start',
-                                !isSidebarOpen && 'w-auto justify-center'
-                            )}
-                        >
-                            <IconHistory size={14} strokeWidth={2} />
-                            {isSidebarOpen && 'Recent'}
-                            {isSidebarOpen && <span className="inline-flex flex-1" />}
-                            {isSidebarOpen && <IconChevronRight size={14} strokeWidth={2} />}
-                        </Button>
-                    </Link> */}
                 </Flex>
 
                 {false ? (
@@ -312,6 +303,22 @@ export const Sidebar = () => {
                             <IconArrowBarRight size={16} strokeWidth={2} />
                         </Button>
                     )}
+                    {!isSidebarOpen && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            tooltip={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                            tooltipSide="right"
+                            onClick={toggleTheme}
+                            className="mx-auto"
+                        >
+                            {theme === 'dark' ? (
+                                <IconSun size={16} strokeWidth={2} />
+                            ) : (
+                                <IconMoon size={16} strokeWidth={2} />
+                            )}
+                        </Button>
+                    )}
                     {isSignedIn && (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -358,12 +365,6 @@ export const Sidebar = () => {
                                     <IconSettings size={16} strokeWidth={2} />
                                     Settings
                                 </DropdownMenuItem>
-                                {/* {!isSignedIn && (
-                                <DropdownMenuItem onClick={() => push('/sign-in')}>
-                                    <IconUser size={16} strokeWidth={2} />
-                                    Log in
-                                </DropdownMenuItem>
-                            )} */}
                                 {isSignedIn && (
                                     <DropdownMenuItem onClick={() => openUserProfile()}>
                                         <IconUser size={16} strokeWidth={2} />
@@ -381,21 +382,52 @@ export const Sidebar = () => {
                     )}
                     {isSidebarOpen && !isSignedIn && (
                         <div className="flex w-full flex-col gap-1.5 p-1">
-                            <Button
-                                variant="bordered"
-                                size="sm"
-                                rounded="lg"
-                                onClick={() => {
-                                    setIsSettingsOpen(true);
-                                }}
-                            >
-                                <IconSettings2 size={14} strokeWidth={2} />
-                                Settings
-                            </Button>
+                            <div className="flex w-full flex-row gap-1.5">
+                                <Button
+                                    variant="bordered"
+                                    size="sm"
+                                    rounded="lg"
+                                    className="flex-1"
+                                    onClick={() => {
+                                        setIsSettingsOpen(true);
+                                    }}
+                                >
+                                    <IconSettings2 size={14} strokeWidth={2} />
+                                    Settings
+                                </Button>
+                                <Button
+                                    variant="bordered"
+                                    size="sm"
+                                    rounded="lg"
+                                    tooltip={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                                    onClick={toggleTheme}
+                                >
+                                    {theme === 'dark' ? (
+                                        <IconSun size={14} strokeWidth={2} />
+                                    ) : (
+                                        <IconMoon size={14} strokeWidth={2} />
+                                    )}
+                                </Button>
+                            </div>
                             <Button size="sm" rounded="lg" onClick={() => push('/sign-in')}>
                                 Log in / Sign up
                             </Button>
                         </div>
+                    )}
+                    {isSidebarOpen && isSignedIn && (
+                        <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            tooltip={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                            onClick={toggleTheme}
+                            className="self-end mr-1"
+                        >
+                            {theme === 'dark' ? (
+                                <IconSun size={14} strokeWidth={2} />
+                            ) : (
+                                <IconMoon size={14} strokeWidth={2} />
+                            )}
+                        </Button>
                     )}
                 </Flex>
             </Flex>
