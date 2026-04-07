@@ -191,15 +191,12 @@ export const ChatInput = ({
                                     </Flex>
                                 </motion.div>
                             ) : (
-                                <motion.div
-                                    className="flex h-24 w-full items-center justify-center"
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.15 }}
-                                >
-                                    <div className="animate-pulse">Editor laden...</div>
-                                </motion.div>
+                                <div className="w-full">
+                                    <div className="px-3 pt-3 pb-10 text-sm text-muted-foreground/40">
+                                        {isFollowUp ? 'Stel een vervolgvraag' : 'Vraag maar raak'}
+                                    </div>
+                                    <div className="border-border w-full border-t border-dashed px-2 py-2 h-10" />
+                                </div>
                             )}
                         </motion.div>
                     </ImageDropzoneRoot>
@@ -277,25 +274,18 @@ type AnimatedTitlesProps = {
     firstName?: string;
 };
 
+const getTimeBasedGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) return 'Goedemorgen';
+    else if (hour >= 12 && hour < 18) return 'Goedemiddag';
+    else return 'Goedenavond';
+};
+
 const AnimatedTitles = ({ titles = [], firstName = '' }: AnimatedTitlesProps) => {
-    const [greeting, setGreeting] = React.useState<string>('');
+    const [greeting, setGreeting] = React.useState<string>(getTimeBasedGreeting);
 
     React.useEffect(() => {
-        const getTimeBasedGreeting = () => {
-            const hour = new Date().getHours();
-
-            if (hour >= 5 && hour < 12) {
-                return 'Goedemorgen';
-            } else if (hour >= 12 && hour < 18) {
-                return 'Goedemiddag';
-            } else {
-                return 'Goedenavond';
-            }
-        };
-
-        setGreeting(getTimeBasedGreeting());
-
-        // Update the greeting if the component is mounted during a time transition
+        // Update the greeting if the component crosses a time boundary
         const interval = setInterval(() => {
             const newGreeting = getTimeBasedGreeting();
             if (newGreeting !== greeting) {

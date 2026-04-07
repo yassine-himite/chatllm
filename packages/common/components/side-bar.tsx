@@ -144,7 +144,7 @@ export const Sidebar = () => {
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={{ duration: 0.3, delay: 0.2 }}
+                            transition={{ duration: 0.15 }}
                             className={cn(
                                 'flex h-8 w-full cursor-pointer items-center justify-start gap-1.5 px-4',
                                 !isSidebarOpen && 'justify-center px-0'
