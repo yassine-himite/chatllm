@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/InterVariable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'ClashGrotesk';
+  src: url('/ClashGrotesk-Variable.woff2') format('woff2');
+  font-weight: 200 700;
+  font-style: normal;
+}
+
+@layer base {
+  :root {
+    --background: 180 0% 100%;
+    --foreground: 180 0% 2%;
+    --secondary: 180 0% 98%;
+    --secondary-foreground: 180 0% 4%;
+    --tertiary: 180 0% 94%;
+    --tertiary-foreground: 180 0% 6%;
+    --quaternary: 180 0% 90%;
+    --muted: 180 0% 90%;
+    --muted-foreground: 180 0% 40%;
+    --border: 180 0% 84%;
+    --brand: 259 99% 65%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 180 0% 10%;
+    --foreground: 180 0% 98%;
+    --secondary: 180 0% 8%;
+    --secondary-foreground: 180 0% 98%;
+    --tertiary: 180 0% 6%;
+    --quaternary: 180 0% 2%;
+    --muted: 180 0% 20%;
+    --muted-foreground: 180 0% 60%;
+    --border: 180 0% 16%;
+    --brand: 259 99% 65%;
+  }
+
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground font-sans; }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
+
+.greeting-bubble::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  bottom: 0;
+  left: -7px;
+  height: 20px;
+  width: 20px;
+  background: hsl(var(--muted));
+  border-bottom-right-radius: 15px;
+}
+.greeting-bubble::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  left: -10px;
+  width: 10px;
+  height: 20px;
+  background: hsl(var(--background));
+  border-bottom-right-radius: 10px;
+}
