@@ -118,7 +118,7 @@ export const ChatInput = ({
     };
 
     const renderChatInput = () => (
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
             <motion.div
                 className="w-full px-3"
                 initial={{ opacity: 0, y: 10 }}
@@ -245,14 +245,17 @@ export const ChatInput = ({
                     className={cn('w-full pb-4', threadItemsLength > 0 ? 'mb-0' : 'h-full')}
                 >
                     {!currentThreadId && showGreeting && (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.3, ease: 'easeOut' }}
-                            className="mb-4 flex w-full flex-col items-center gap-1"
-                        >
-                            <AnimatedTitles firstName={firstName} />
-                        </motion.div>
+                        <AnimatePresence initial={false}>
+                            <motion.div
+                                key="greeting"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.3, ease: 'easeOut' }}
+                                className="mb-4 flex w-full flex-col items-center gap-1"
+                            >
+                                <AnimatedTitles firstName={firstName} />
+                            </motion.div>
+                        </AnimatePresence>
                     )}
 
                     {renderChatBottom()}
@@ -308,7 +311,7 @@ const AnimatedTitles = ({ titles = [], firstName = '' }: AnimatedTitlesProps) =>
             direction="col"
             className="relative h-[60px] w-full items-center justify-center overflow-hidden"
         >
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait" initial={false}>
                 <motion.h1
                     key={greeting}
                     initial={{ opacity: 0, y: -5 }}

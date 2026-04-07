@@ -176,154 +176,57 @@ export const AgentProvider = ({ children }: { children: ReactNode }) => {
             });
 
             try {
-                const response = await fetch('/api/completion', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body),
-                    credentials: 'include',
-                    cache: 'no-store',
-                    signal: abortController.signal,
-                });
+                await new Promise<void>(resolve => setTimeout(resolve, 700));
 
-                if (!response.ok) {
-                    let errorText = await response.text();
+                const mockWords = [
+                    'Dit ', 'is ', 'een ', 'voorbeeldreactie ', 'in ', 'de ',
+                    'designmodus. ', 'De ', 'AI-backend ', 'is ', 'verwijderd — ',
+                    'alleen ', 'het ', 'ontwerp ', 'is ', 'actief.',
+                ];
 
-                    if (response.status === 429 && isSignedIn) {
-                        errorText =
-                            'You have reached the daily limit of requests. Please try again tomorrow or Use your own API key.';
-                    }
-
-                    if (response.status === 429 && !isSignedIn) {
-                        errorText =
-                            'You have reached the daily limit of requests. Please sign in to enjoy more requests.';
-                    }
-
-                    setIsGenerating(false);
-                    updateThreadItem(body.threadId, {
-                        id: body.threadItemId,
-                        status: 'ERROR',
-                        error: errorText,
-                        persistToDB: true,
-                    });
-                    console.error('Error response:', errorText);
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                for (let i = 0; i < mockWords.length; i++) {
+                    if (abortController.signal.aborted) break;
+                    const chunk = mockWords.slice(0, i + 1).join('');
+                    handleThreadItemUpdate(
+                        body.threadId,
+                        body.threadItemId,
+                        'answer',
+                        {
+                            ...body,
+                            answer: { text: chunk, status: 'STREAMING' },
+                        },
+                        body.parentThreadItemId,
+                        false
+                    );
+                    await new Promise(resolve => setTimeout(resolve, 40));
                 }
 
-                if (!response.body) {
-                    throw new Error('No response body received');
-                }
-
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let lastDbUpdate = Date.now();
-                const DB_UPDATE_INTERVAL = 1000;
-                let eventCount = 0;
-                const streamStartTime = performance.now();
-
-                let buffer = '';
-
-                while (true) {
-                    try {
-                        const { value, done } = await reader.read();
-                        if (done) break;
-
-                        buffer += decoder.decode(value, { stream: true });
-                        const messages = buffer.split('\n\n');
-                        buffer = messages.pop() || '';
-
-                        for (const message of messages) {
-                            if (!message.trim()) continue;
-
-                            const eventMatch = message.match(/^event: (.+)$/m);
-                            const dataMatch = message.match(/^data: (.+)$/m);
-
-                            if (eventMatch && dataMatch) {
-                                const currentEvent = eventMatch[1];
-                                eventCount++;
-
-                                try {
-                                    const data = JSON.parse(dataMatch[1]);
-                                    if (
-                                        EVENT_TYPES.includes(currentEvent) &&
-                                        data?.threadId &&
-                                        data?.threadItemId
-                                    ) {
-                                        const shouldPersistToDB =
-                                            Date.now() - lastDbUpdate >= DB_UPDATE_INTERVAL;
-                                        handleThreadItemUpdate(
-                                            data.threadId,
-                                            data.threadItemId,
-                                            currentEvent,
-                                            data,
-                                            data.parentThreadItemId,
-                                            shouldPersistToDB
-                                        );
-                                        if (shouldPersistToDB) {
-                                            lastDbUpdate = Date.now();
-                                        }
-                                    } else if (currentEvent === 'done' && data.type === 'done') {
-                                        setIsGenerating(false);
-                                        const streamDuration = performance.now() - streamStartTime;
-                                        console.log(
-                                            'done event received',
-                                            eventCount,
-                                            `Stream duration: ${streamDuration.toFixed(2)}ms`
-                                        );
-                                        setTimeout(fetchRemainingCredits, 1000);
-                                        if (data.threadItemId) {
-                                            threadItemMap.delete(data.threadItemId);
-                                        }
-                                        if (data.status === 'error') {
-                                            console.error('Stream error:', data.error);
-                                        }
-                                    }
-                                } catch (jsonError) {
-                                    console.warn(
-                                        'JSON parse error for data:',
-                                        dataMatch[1],
-                                        jsonError
-                                    );
-                                }
-                            }
-                        }
-                    } catch (readError) {
-                        console.error('Error reading from stream:', readError);
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                        continue;
-                    }
-                }
-            } catch (streamError: any) {
-                const totalTime = performance.now() - startTime;
-                console.error(
-                    'Fatal stream error:',
-                    streamError,
-                    `Total time: ${totalTime.toFixed(2)}ms`
+                handleThreadItemUpdate(
+                    body.threadId,
+                    body.threadItemId,
+                    'answer',
+                    {
+                        ...body,
+                        answer: {
+                            text: mockWords.join(''),
+                            status: 'COMPLETED',
+                        },
+                    },
+                    body.parentThreadItemId,
+                    true
                 );
+
                 setIsGenerating(false);
-                if (streamError.name === 'AbortError') {
-                    updateThreadItem(body.threadId, {
-                        id: body.threadItemId,
-                        status: 'ABORTED',
-                        error: 'Generation aborted',
-                    });
-                } else if (streamError.message.includes('429')) {
-                    updateThreadItem(body.threadId, {
-                        id: body.threadItemId,
-                        status: 'ERROR',
-                        error: 'You have reached the daily limit of requests. Please try again tomorrow or Use your own API key.',
-                    });
-                } else {
-                    updateThreadItem(body.threadId, {
-                        id: body.threadItemId,
-                        status: 'ERROR',
-                        error: 'Something went wrong. Please try again.',
-                    });
-                }
+                setTimeout(fetchRemainingCredits, 1000);
+            } catch (streamError: any) {
+                setIsGenerating(false);
+                updateThreadItem(body.threadId, {
+                    id: body.threadItemId,
+                    status: 'ABORTED',
+                    error: 'Generation aborted',
+                });
             } finally {
                 setIsGenerating(false);
-
-                const totalTime = performance.now() - startTime;
-                console.info(`Stream completed in ${totalTime.toFixed(2)}ms`);
             }
         },
         [

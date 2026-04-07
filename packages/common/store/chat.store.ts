@@ -536,20 +536,13 @@ export const useChatStore = create(
         },
 
         fetchRemainingCredits: async () => {
-            try {
-                const response = await fetch('/api/messages/remaining');
-                if (!response.ok) throw new Error('Failed to fetch credit info');
-
-                const data = await response.json();
-                set({
-                    creditLimit: {
-                        ...data,
-                        isFetched: true,
-                    },
-                });
-            } catch (error) {
-                console.error('Error fetching remaining credits:', error);
-            }
+            set({
+                creditLimit: {
+                    remaining: 9999,
+                    limit: 9999,
+                    isFetched: true,
+                },
+            });
         },
 
         getPinnedThreads: async () => {

@@ -575,35 +575,12 @@ export const ProfileSettings = () => {
         setSaving(true);
         setMessage(null);
 
-        try {
-            const res = await fetch('/api/auth/me', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({
-                    name: name !== user.name ? name : undefined,
-                    email: email !== user.email ? email : undefined,
-                    currentPassword: currentPassword || undefined,
-                    newPassword: newPassword || undefined,
-                }),
-            });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                setMessage({ type: 'error', text: data.error || 'Bijwerken mislukt' });
-            } else {
-                setMessage({ type: 'success', text: 'Profiel bijgewerkt' });
-                setCurrentPassword('');
-                setNewPassword('');
-                setConfirmPassword('');
-                await refetch();
-            }
-        } catch {
-            setMessage({ type: 'error', text: 'Er is iets misgegaan' });
-        } finally {
-            setSaving(false);
-        }
+        await new Promise(resolve => setTimeout(resolve, 400));
+        setMessage({ type: 'success', text: 'Profiel bijgewerkt' });
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setSaving(false);
     };
 
     const handleDelete = async () => {
@@ -611,18 +588,9 @@ export const ProfileSettings = () => {
 
         setDeleting(true);
         try {
-            const res = await fetch('/api/auth/me', {
-                method: 'DELETE',
-                credentials: 'include',
-            });
-
-            if (res.ok) {
-                await signOut();
-                setIsSettingsOpen(false);
-            } else {
-                const data = await res.json();
-                setMessage({ type: 'error', text: data.error || 'Verwijderen mislukt' });
-            }
+            await new Promise(resolve => setTimeout(resolve, 400));
+            await signOut();
+            setIsSettingsOpen(false);
         } catch {
             setMessage({ type: 'error', text: 'Er is iets misgegaan' });
         } finally {
