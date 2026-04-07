@@ -1,5 +1,4 @@
 import { ItemStatus } from '@repo/shared/types';
-import { motion } from 'framer-motion';
 
 export const StepStatus = ({ status }: { status: ItemStatus }) => {
     switch (status) {
@@ -174,7 +173,7 @@ const loadingContainer = {
     alignItems: 'center',
 };
 
-const loadingCircle = {
+const loadingCircle: React.CSSProperties = {
     display: 'block',
     width: '0.2rem',
     height: '0.2rem',
@@ -183,46 +182,29 @@ const loadingCircle = {
     marginRight: '0.1rem',
     backgroundColor: 'currentColor',
     borderRadius: '30%',
+    flexShrink: 0,
 };
 
 export const ThreeDotsWave = () => {
     return (
-        <div style={loadingContainer}>
-            <motion.span
-                style={loadingCircle}
-                className="shrink-0"
-                animate={{ y: [0, -4, 0] }}
-                transition={{
-                    duration: 0.2,
-                    repeat: Infinity,
-                    repeatDelay: 0.8,
-                    ease: 'easeInOut',
-                }}
-            />
-            <motion.span
-                style={loadingCircle}
-                className="shrink-0"
-                animate={{ y: [0, -4, 0] }}
-                transition={{
-                    duration: 0.2,
-                    repeat: Infinity,
-                    repeatDelay: 0.8,
-                    ease: 'easeInOut',
-                    delay: 0.2,
-                }}
-            />
-            <motion.span
-                style={loadingCircle}
-                className="shrink-0"
-                animate={{ y: [0, -4, 0] }}
-                transition={{
-                    duration: 0.2,
-                    repeat: Infinity,
-                    repeatDelay: 0.8,
-                    ease: 'easeInOut',
-                    delay: 0.4,
-                }}
-            />
-        </div>
+        <>
+            <style>{`
+                @keyframes three-dots-wave {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-4px); }
+                }
+            `}</style>
+            <div style={loadingContainer}>
+                <span
+                    style={{ ...loadingCircle, animation: 'three-dots-wave 1s ease-in-out 0s infinite' }}
+                />
+                <span
+                    style={{ ...loadingCircle, animation: 'three-dots-wave 1s ease-in-out 0.2s infinite' }}
+                />
+                <span
+                    style={{ ...loadingCircle, animation: 'three-dots-wave 1s ease-in-out 0.4s infinite' }}
+                />
+            </div>
+        </>
     );
 };

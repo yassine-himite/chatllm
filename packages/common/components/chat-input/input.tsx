@@ -8,7 +8,6 @@ import {
 import { useImageAttachment } from '@repo/common/hooks';
 import { ChatModeConfig } from '@repo/shared/config';
 import { cn, Flex } from '@repo/ui';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -72,6 +71,7 @@ export const ChatInput = ({
             prefetch('/chat/warmup');
         }
     }, [currentThreadId, prefetch]);
+
     const sendMessage = async () => {
         if (
             !isSignedIn &&
@@ -96,7 +96,6 @@ export const ChatInput = ({
             threadId = optimisticId;
         }
 
-        // First submit the message
         const formData = new FormData();
         formData.append('query', editor.getText());
         imageAttachment?.base64 && formData.append('imageAttachment', imageAttachment?.base64);
@@ -118,14 +117,8 @@ export const ChatInput = ({
     };
 
     const renderChatInput = () => (
-        <AnimatePresence initial={false}>
-            <motion.div
-                className="w-full px-3"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                key={`chat-input`}
-                transition={{ duration: 0.2, ease: 'easeOut' }}
-            >
+        <>
+            <div className="w-full px-3">
                 <Flex
                     direction="col"
                     className={cn(
@@ -133,19 +126,9 @@ export const ChatInput = ({
                     )}
                 >
                     <ImageDropzoneRoot dropzoneProps={dropzonProps}>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.15 }}
-                            className="flex w-full flex-shrink-0 overflow-hidden rounded-lg"
-                        >
+                        <div className="flex w-full flex-shrink-0 overflow-hidden rounded-lg">
                             {editor?.isEditable ? (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    transition={{ duration: 0.15, ease: 'easeOut' }}
-                                    className="w-full"
-                                >
+                                <div className="w-full">
                                     <ImageAttachment />
                                     <Flex className="flex w-full flex-row items-end gap-0">
                                         <ChatEditor
@@ -189,7 +172,7 @@ export const ChatInput = ({
                                             />
                                         </Flex>
                                     </Flex>
-                                </motion.div>
+                                </div>
                             ) : (
                                 <div className="w-full">
                                     <div className="px-3 pt-3 pb-10 text-sm text-muted-foreground/40">
@@ -198,12 +181,12 @@ export const ChatInput = ({
                                     <div className="border-border w-full border-t border-dashed px-2 py-2 h-10" />
                                 </div>
                             )}
-                        </motion.div>
+                        </div>
                     </ImageDropzoneRoot>
                 </Flex>
-            </motion.div>
-            <MessagesRemainingBadge key="remaining-messages" />
-        </AnimatePresence>
+            </div>
+            <MessagesRemainingBadge />
+        </>
     );
 
     const renderChatBottom = () => (
@@ -242,17 +225,9 @@ export const ChatInput = ({
                     className={cn('w-full pb-4', threadItemsLength > 0 ? 'mb-0' : 'h-full')}
                 >
                     {!currentThreadId && showGreeting && (
-                        <AnimatePresence initial={false}>
-                            <motion.div
-                                key="greeting"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ duration: 0.3, ease: 'easeOut' }}
-                                className="mb-4 flex w-full flex-col items-center gap-1"
-                            >
-                                <AnimatedTitles firstName={firstName} />
-                            </motion.div>
-                        </AnimatePresence>
+                        <div className="mb-4 flex w-full flex-col items-center gap-1">
+                            <AnimatedTitles firstName={firstName} />
+                        </div>
                     )}
 
                     {renderChatBottom()}
@@ -285,13 +260,12 @@ const AnimatedTitles = ({ titles = [], firstName = '' }: AnimatedTitlesProps) =>
     const [greeting, setGreeting] = React.useState<string>(getTimeBasedGreeting);
 
     React.useEffect(() => {
-        // Update the greeting if the component crosses a time boundary
         const interval = setInterval(() => {
             const newGreeting = getTimeBasedGreeting();
             if (newGreeting !== greeting) {
                 setGreeting(newGreeting);
             }
-        }, 60000); // Check every minute
+        }, 60000);
 
         return () => clearInterval(interval);
     }, [greeting]);
@@ -301,22 +275,10 @@ const AnimatedTitles = ({ titles = [], firstName = '' }: AnimatedTitlesProps) =>
             direction="col"
             className="relative h-[60px] w-full items-center justify-center overflow-hidden"
         >
-            <AnimatePresence mode="wait" initial={false}>
-                <motion.h1
-                    key={greeting}
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 5 }}
-                    transition={{
-                        duration: 0.8,
-                        ease: 'easeInOut',
-                    }}
-                    className="from-muted-foreground/50 via-muted-foreground/40 to-muted-foreground/20 bg-gradient-to-r bg-clip-text text-center text-[32px] font-semibold tracking-tight text-transparent"
-                >
-                    {greeting}
-                    {firstName ? ` ${firstName}` : ''}
-                </motion.h1>
-            </AnimatePresence>
+            <h1 className="from-muted-foreground/50 via-muted-foreground/40 to-muted-foreground/20 bg-gradient-to-r bg-clip-text text-center text-[32px] font-semibold tracking-tight text-transparent">
+                {greeting}
+                {firstName ? ` ${firstName}` : ''}
+            </h1>
         </Flex>
     );
 };

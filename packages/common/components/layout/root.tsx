@@ -12,7 +12,6 @@ import { useAppStore } from '@repo/common/store';
 import { plausible } from '@repo/shared/utils';
 import { Badge, Button, Flex, Toaster } from '@repo/ui';
 import { IconMoodSadDizzy, IconX } from '@tabler/icons-react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import { FC, useEffect } from 'react';
 import { useStickToBottom } from 'use-stick-to-bottom';
@@ -45,7 +44,7 @@ export const RootLayout: FC<TRootLayout> = ({ children }) => {
                 </div>
             </div>
             <Flex className="hidden lg:flex">
-                <AnimatePresence>{isSidebarOpen && <Sidebar />}</AnimatePresence>
+                {isSidebarOpen && <Sidebar />}
             </Flex>
 
             <Drawer.Root
@@ -66,7 +65,7 @@ export const RootLayout: FC<TRootLayout> = ({ children }) => {
 
             {/* Main Content */}
             <Flex className="flex-1 overflow-hidden">
-                <motion.div className="flex w-full py-1 pr-1">
+                <div className="flex w-full py-1 pr-1">
                     <AgentProvider>
                         <div className={containerClass}>
                             <div className="relative flex h-full w-0 flex-1 flex-row">
@@ -82,7 +81,7 @@ export const RootLayout: FC<TRootLayout> = ({ children }) => {
                             <IntroDialog />
                         </div>
                     </AgentProvider>
-                </motion.div>
+                </div>
                 <SettingsModal />
                 <CommandSearch />
             </Flex>
@@ -102,52 +101,39 @@ export const SideDrawer = () => {
     });
     const isThreadPage = pathname.startsWith('/chat/');
 
+    if (!sideDrawer.open || !isThreadPage) return null;
+
     return (
-        <AnimatePresence>
-            {sideDrawer.open && isThreadPage && (
-                <motion.div
-                    initial={{ opacity: 0, x: 40 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 40 }}
-                    transition={{
-                        type: 'spring',
-                        stiffness: 300,
-                        damping: 30,
-                        exit: { duration: 0.2 },
-                    }}
-                    className="flex min-h-[99dvh] w-[500px] shrink-0 flex-col overflow-hidden py-1.5 pl-0.5 pr-1.5"
-                >
-                    <div className="bg-background border-border shadow-subtle-xs flex h-full w-full flex-col overflow-hidden rounded-lg">
-                        <div className="border-border flex flex-row items-center justify-between gap-2 border-b py-1.5 pl-4 pr-2">
-                            <div className="text-sm font-medium">
-                                {typeof sideDrawer.title === 'function'
-                                    ? sideDrawer.title()
-                                    : sideDrawer.title}
-                            </div>
-                            {sideDrawer.badge && (
-                                <Badge variant="default">{sideDrawer.badge}</Badge>
-                            )}
-                            <div className="flex-1" />
-                            <Button
-                                variant="secondary"
-                                size="icon-xs"
-                                onClick={() => dismissSideDrawer()}
-                                tooltip="Close"
-                            >
-                                <IconX size={14} strokeWidth={2} />
-                            </Button>
-                        </div>
-                        <div
-                            className="no-scrollbar flex flex-1 flex-col gap-2 overflow-y-auto p-2"
-                            ref={scrollRef}
-                        >
-                            <div ref={contentRef} className="w-full">
-                                {sideDrawer.renderContent()}
-                            </div>
-                        </div>
+        <div className="flex min-h-[99dvh] w-[500px] shrink-0 flex-col overflow-hidden py-1.5 pl-0.5 pr-1.5">
+            <div className="bg-background border-border shadow-subtle-xs flex h-full w-full flex-col overflow-hidden rounded-lg">
+                <div className="border-border flex flex-row items-center justify-between gap-2 border-b py-1.5 pl-4 pr-2">
+                    <div className="text-sm font-medium">
+                        {typeof sideDrawer.title === 'function'
+                            ? sideDrawer.title()
+                            : sideDrawer.title}
                     </div>
-                </motion.div>
-            )}
-        </AnimatePresence>
+                    {sideDrawer.badge && (
+                        <Badge variant="default">{sideDrawer.badge}</Badge>
+                    )}
+                    <div className="flex-1" />
+                    <Button
+                        variant="secondary"
+                        size="icon-xs"
+                        onClick={() => dismissSideDrawer()}
+                        tooltip="Close"
+                    >
+                        <IconX size={14} strokeWidth={2} />
+                    </Button>
+                </div>
+                <div
+                    className="no-scrollbar flex flex-1 flex-col gap-2 overflow-y-auto p-2"
+                    ref={scrollRef}
+                >
+                    <div ref={contentRef} className="w-full">
+                        {sideDrawer.renderContent()}
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 };

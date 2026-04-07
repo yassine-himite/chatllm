@@ -1,48 +1,16 @@
-import { motion } from 'framer-motion';
-
-const LoadingDot = {
+const LoadingDot: React.CSSProperties = {
     display: 'block',
     width: '4px',
     height: '4px',
     borderRadius: '50%',
 };
 
-const LoadingContainer = {
+const LoadingContainer: React.CSSProperties = {
     width: '24px',
     height: '24px',
     paddingTop: '6px',
     display: 'flex',
     justifyContent: 'space-around',
-};
-
-const ContainerVariants = {
-    initial: {
-        transition: {
-            staggerChildren: 0.2,
-        },
-    },
-    animate: {
-        transition: {
-            staggerChildren: 0.2,
-        },
-    },
-};
-
-const DotVariants = {
-    initial: {
-        y: '0%',
-        opacity: 1,
-    },
-    animate: {
-        y: '100%',
-        opacity: 0.5,
-    },
-};
-
-const DotTransition = {
-    duration: 1.5,
-    repeat: Infinity,
-    ease: 'easeInOut',
 };
 
 export function Spinner() {
@@ -64,38 +32,29 @@ export function Spinner() {
 
 export function LinearSpinner() {
     return (
-        <div
-            style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-            }}
-        >
-            <motion.div
-                style={LoadingContainer}
-                variants={ContainerVariants}
-                initial="initial"
-                animate="animate"
-            >
-                <motion.span
-                    style={LoadingDot}
-                    className="bg-muted-foreground"
-                    variants={DotVariants}
-                    transition={DotTransition}
-                />
-                <motion.span
-                    style={LoadingDot}
-                    className="bg-muted-foreground"
-                    variants={DotVariants}
-                    transition={DotTransition}
-                />
-                <motion.span
-                    style={LoadingDot}
-                    className="bg-muted-foreground"
-                    variants={DotVariants}
-                    transition={DotTransition}
-                />
-            </motion.div>
-        </div>
+        <>
+            <style>{`
+                @keyframes linear-dot-bounce {
+                    0%, 100% { transform: translateY(0); opacity: 1; }
+                    50% { transform: translateY(100%); opacity: 0.5; }
+                }
+            `}</style>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={LoadingContainer}>
+                    <span
+                        className="bg-muted-foreground"
+                        style={{ ...LoadingDot, animation: 'linear-dot-bounce 1.5s ease-in-out 0s infinite' }}
+                    />
+                    <span
+                        className="bg-muted-foreground"
+                        style={{ ...LoadingDot, animation: 'linear-dot-bounce 1.5s ease-in-out 0.2s infinite' }}
+                    />
+                    <span
+                        className="bg-muted-foreground"
+                        style={{ ...LoadingDot, animation: 'linear-dot-bounce 1.5s ease-in-out 0.4s infinite' }}
+                    />
+                </div>
+            </div>
+        </>
     );
 }

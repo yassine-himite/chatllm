@@ -2,7 +2,6 @@ import { SearchResultsList, StepStatus, TextShimmer } from '@repo/common/compone
 import { Step } from '@repo/shared/types';
 import { Badge } from '@repo/ui';
 import { IconSearch } from '@tabler/icons-react';
-import { motion } from 'framer-motion';
 import React from 'react';
 
 export type StepRendererType = {
@@ -14,14 +13,9 @@ export const StepRenderer = ({ step }: StepRendererType) => {
     const renderTextStep = () => {
         if (step?.text) {
             return (
-                <motion.p
-                    className="text-muted-foreground text-sm"
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: 0.1 }}
-                >
+                <p className="text-muted-foreground text-sm">
                     {step.text}
-                </motion.p>
+                </p>
             );
         }
         return null;
@@ -30,12 +24,7 @@ export const StepRenderer = ({ step }: StepRendererType) => {
     const renderSearchStep = () => {
         if (step?.steps && 'search' in step?.steps) {
             return (
-                <motion.div
-                    className="flex flex-col gap-1"
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: 0.2 }}
-                >
+                <div className="flex flex-col gap-1">
                     <div className="flex flex-col gap-2">
                         <div className="w-[100px]">
                             <TextShimmer
@@ -50,21 +39,16 @@ export const StepRenderer = ({ step }: StepRendererType) => {
                         <div className="flex flex-row flex-wrap gap-1">
                             {Array.isArray(step.steps?.search?.data) &&
                                 step.steps?.search?.data?.map((query: string, index: number) => (
-                                    <motion.div
-                                        key={index}
-                                        initial={{ opacity: 0, y: 5 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.2, delay: 0.1 + index * 0.05 }}
-                                    >
+                                    <div key={index}>
                                         <Badge>
                                             <IconSearch size={12} className="opacity-50" />
                                             {query}
                                         </Badge>
-                                    </motion.div>
+                                    </div>
                                 ))}
                         </div>
                     </div>
-                </motion.div>
+                </div>
             );
         }
     };
@@ -72,12 +56,7 @@ export const StepRenderer = ({ step }: StepRendererType) => {
     const renderReadStep = () => {
         if (step?.steps && 'read' in step.steps) {
             return (
-                <motion.div
-                    className="flex flex-col gap-2"
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: 0.3 }}
-                >
+                <div className="flex flex-col gap-2">
                     <div className="w-[100px]">
                         <TextShimmer
                             duration={0.7}
@@ -90,7 +69,7 @@ export const StepRenderer = ({ step }: StepRendererType) => {
                     <SearchResultsList
                         sources={Array.isArray(step.steps?.read?.data) ? step.steps.read.data : []}
                     />
-                </motion.div>
+                </div>
             );
         }
         return null;
@@ -102,12 +81,7 @@ export const StepRenderer = ({ step }: StepRendererType) => {
                 typeof step.steps?.reasoning?.data === 'string' ? step.steps.reasoning.data : '';
 
             return (
-                <motion.div
-                    className="flex flex-col gap-2"
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: 0.4 }}
-                >
+                <div className="flex flex-col gap-2">
                     <div className="w-[100px]">
                         <TextShimmer
                             duration={0.7}
@@ -126,7 +100,7 @@ export const StepRenderer = ({ step }: StepRendererType) => {
                             </React.Fragment>
                         ))}
                     </p>
-                </motion.div>
+                </div>
             );
         }
         return null;
@@ -135,12 +109,7 @@ export const StepRenderer = ({ step }: StepRendererType) => {
     const renderWrapupStep = () => {
         if (step?.steps && 'wrapup' in step.steps) {
             return (
-                <motion.div
-                    className="flex flex-col gap-2"
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: 0.5 }}
-                >
+                <div className="flex flex-col gap-2">
                     <div className="w-[100px]">
                         <TextShimmer
                             duration={0.7}
@@ -151,7 +120,7 @@ export const StepRenderer = ({ step }: StepRendererType) => {
                         </TextShimmer>
                     </div>
                     <p>{step.steps?.wrapup?.data || ''}</p>
-                </motion.div>
+                </div>
             );
         }
         return null;
@@ -164,25 +133,15 @@ export const StepRenderer = ({ step }: StepRendererType) => {
                 <div className="bg-background z-10">
                     <StepStatus status={step.status} />
                 </div>
-                <motion.div
-                    className="border-border min-h-full w-[1px] flex-1 border-l border-dashed"
-                    initial={{ height: 0 }}
-                    animate={{ height: '100%' }}
-                    transition={{ duration: 0.5 }}
-                />
+                <div className="border-border min-h-full w-[1px] flex-1 border-l border-dashed" />
             </div>
-            <motion.div
-                className="flex w-full flex-1 flex-col gap-4 overflow-hidden pb-2 pr-2"
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-            >
+            <div className="flex w-full flex-1 flex-col gap-4 overflow-hidden pb-2 pr-2">
                 {renderWrapupStep()}
                 {renderTextStep()}
                 {renderReasoningStep()}
                 {renderSearchStep()}
                 {renderReadStep()}
-            </motion.div>
+            </div>
         </div>
     );
 };

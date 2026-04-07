@@ -30,7 +30,6 @@ import {
     IconSun,
     IconUser,
 } from '@tabler/icons-react';
-import { motion } from 'framer-motion';
 import moment from 'moment';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
@@ -141,10 +140,7 @@ export const Sidebar = () => {
             <Flex direction="col" className="w-full flex-1 items-start overflow-hidden">
                 <div className="mb-3 flex w-full flex-row items-center justify-between">
                     <Link href="/chat" className="w-full">
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.15 }}
+                        <div
                             className={cn(
                                 'flex h-8 w-full cursor-pointer items-center justify-start gap-1.5 px-4',
                                 !isSidebarOpen && 'justify-center px-0'
@@ -156,7 +152,7 @@ export const Sidebar = () => {
                                     twelo.ai
                                 </p>
                             )}
-                        </motion.div>
+                        </div>
                     </Link>
                     {isSidebarOpen && (
                         <Button

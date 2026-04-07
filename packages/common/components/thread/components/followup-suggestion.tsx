@@ -2,7 +2,6 @@ import { useChatStore } from '@repo/common/store';
 import { Button } from '@repo/ui';
 import { IconHelpHexagon } from '@tabler/icons-react';
 import { Editor } from '@tiptap/react';
-import { motion } from 'framer-motion';
 import { useShallow } from 'zustand/react/shallow';
 
 export const FollowupSuggestions = ({ suggestions }: { suggestions: string[] }) => {
@@ -15,34 +14,13 @@ export const FollowupSuggestions = ({ suggestions }: { suggestions: string[] }) 
     console.log('suggestions', suggestions);
 
     return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="border-border my-4 flex flex-col items-start gap-2 border-t border-dashed py-4"
-        >
+        <div className="border-border my-4 flex flex-col items-start gap-2 border-t border-dashed py-4">
             <div className="text-muted-foreground flex flex-row items-center gap-1.5 py-2 text-xs font-medium">
                 <IconHelpHexagon size={16} strokeWidth={2} className="text-muted-foreground" /> Vervolgvraag
             </div>
-            <motion.div
-                variants={{
-                    show: {
-                        transition: {
-                            staggerChildren: 0.1,
-                        },
-                    },
-                }}
-                initial="hidden"
-                animate="show"
-                className="flex flex-col gap-2"
-            >
+            <div className="flex flex-col gap-2">
                 {suggestions?.map(suggestion => (
-                    <motion.div
-                        key={suggestion}
-                        variants={{
-                            hidden: { opacity: 0, y: 10 },
-                            show: { opacity: 1, y: 0 },
-                        }}
-                    >
+                    <div key={suggestion}>
                         <Button
                             variant="bordered"
                             size="default"
@@ -55,9 +33,9 @@ export const FollowupSuggestions = ({ suggestions }: { suggestions: string[] }) 
                         >
                             {suggestion}
                         </Button>
-                    </motion.div>
+                    </div>
                 ))}
-            </motion.div>
-        </motion.div>
+            </div>
+        </div>
     );
 };

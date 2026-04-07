@@ -23,7 +23,6 @@ import {
     IconPlayerStopFilled,
     IconWorld,
 } from '@tabler/icons-react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { BYOKIcon, NewIcon } from '../icons';
@@ -49,35 +48,30 @@ export const modelOptions = [
     {
         label: 'Llama 4 Scout',
         value: ChatMode.LLAMA_4_SCOUT,
-        // webSearch: true,
         icon: undefined,
         creditCost: CHAT_MODE_CREDIT_COSTS[ChatMode.LLAMA_4_SCOUT],
     },
     {
         label: 'GPT 4.1',
         value: ChatMode.GPT_4_1,
-        // webSearch: true,
         icon: undefined,
         creditCost: CHAT_MODE_CREDIT_COSTS[ChatMode.GPT_4_1],
     },
     {
         label: 'GPT 4.1 Mini',
         value: ChatMode.GPT_4_1_Mini,
-        // webSearch: true,
         icon: undefined,
         creditCost: CHAT_MODE_CREDIT_COSTS[ChatMode.GPT_4_1_Mini],
     },
     {
         label: 'GPT 4.1 Nano',
         value: ChatMode.GPT_4_1_Nano,
-        // webSearch: true,
         icon: undefined,
         creditCost: CHAT_MODE_CREDIT_COSTS[ChatMode.GPT_4_1_Nano],
     },
     {
         label: 'Gemini Flash 2.0',
         value: ChatMode.GEMINI_2_FLASH,
-        // webSearch: true,
         icon: undefined,
         creditCost: CHAT_MODE_CREDIT_COSTS[ChatMode.GEMINI_2_FLASH],
     },
@@ -85,7 +79,6 @@ export const modelOptions = [
     {
         label: 'GPT 4o Mini',
         value: ChatMode.GPT_4o_Mini,
-        // webSearch: true,
         icon: undefined,
         creditCost: CHAT_MODE_CREDIT_COSTS[ChatMode.GPT_4o_Mini],
     },
@@ -93,7 +86,6 @@ export const modelOptions = [
     {
         label: 'O4 Mini',
         value: ChatMode.O4_Mini,
-        // webSearch: true,
         icon: undefined,
         creditCost: CHAT_MODE_CREDIT_COSTS[ChatMode.O4_Mini],
     },
@@ -101,7 +93,6 @@ export const modelOptions = [
     {
         label: 'Claude 3.5 Sonnet',
         value: ChatMode.CLAUDE_3_5_SONNET,
-        // webSearch: true,
         icon: undefined,
         creditCost: CHAT_MODE_CREDIT_COSTS[ChatMode.CLAUDE_3_5_SONNET],
     },
@@ -109,7 +100,6 @@ export const modelOptions = [
     {
         label: 'Deepseek R1',
         value: ChatMode.DEEPSEEK_R1,
-        // webSearch: true,
         icon: undefined,
         creditCost: CHAT_MODE_CREDIT_COSTS[ChatMode.DEEPSEEK_R1],
     },
@@ -117,7 +107,6 @@ export const modelOptions = [
     {
         label: 'Claude 3.7 Sonnet',
         value: ChatMode.CLAUDE_3_7_SONNET,
-        // webSearch: true,
         icon: undefined,
         creditCost: CHAT_MODE_CREDIT_COSTS[ChatMode.CLAUDE_3_7_SONNET],
     },
@@ -341,46 +330,28 @@ export const SendStopButton = ({
 }) => {
     return (
         <div className="flex flex-row items-center gap-2">
-            <AnimatePresence mode="wait" initial={false}>
-                {isGenerating && !isChatPage ? (
-                    <motion.div
-                        key="stop-button"
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.8, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                    >
-                        <Button
-                            size="icon-sm"
-                            variant="default"
-                            onClick={stopGeneration}
-                            tooltip="Generatie stoppen"
-                        >
-                            <IconPlayerStopFilled size={14} strokeWidth={2} />
-                        </Button>
-                    </motion.div>
-                ) : (
-                    <motion.div
-                        key="send-button"
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.8, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                    >
-                        <Button
-                            size="icon-sm"
-                            tooltip="Bericht verzenden"
-                            variant={hasTextInput ? 'default' : 'secondary'}
-                            disabled={!hasTextInput || isGenerating}
-                            onClick={() => {
-                                sendMessage();
-                            }}
-                        >
-                            <IconArrowUp size={16} strokeWidth={2} />
-                        </Button>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {isGenerating && !isChatPage ? (
+                <Button
+                    size="icon-sm"
+                    variant="default"
+                    onClick={stopGeneration}
+                    tooltip="Generatie stoppen"
+                >
+                    <IconPlayerStopFilled size={14} strokeWidth={2} />
+                </Button>
+            ) : (
+                <Button
+                    size="icon-sm"
+                    tooltip="Bericht verzenden"
+                    variant={hasTextInput ? 'default' : 'secondary'}
+                    disabled={!hasTextInput || isGenerating}
+                    onClick={() => {
+                        sendMessage();
+                    }}
+                >
+                    <IconArrowUp size={16} strokeWidth={2} />
+                </Button>
+            )}
         </div>
     );
 };

@@ -3,14 +3,11 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import { IconX } from '@tabler/icons-react';
-import { AnimatePresence } from 'framer-motion'; // Add this import
 import * as React from 'react';
 import { cn } from '../lib/utils';
 
 const Dialog = ({ children, ...props }: DialogPrimitive.DialogProps) => (
-    <AnimatePresence>
-        <DialogPrimitive.Root {...props}>{children}</DialogPrimitive.Root>
-    </AnimatePresence>
+    <DialogPrimitive.Root {...props}>{children}</DialogPrimitive.Root>
 );
 
 const DialogTrigger = DialogPrimitive.Trigger;
