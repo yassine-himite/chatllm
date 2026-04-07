@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, ReactNode, useCallback, useContext, useState } from 'react';
 
 export type AuthUser = {
     id: string;
@@ -16,39 +16,22 @@ type AuthContextType = {
     signOut: () => Promise<void>;
 };
 
+const MOCK_USER: AuthUser = {
+    id: 'mock-user-1',
+    email: 'yassine@twelo.ai',
+    name: 'Yassine',
+};
+
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [user, setUser] = useState<AuthUser | null>(null);
-    const [isLoaded, setIsLoaded] = useState(false);
+    const [user] = useState<AuthUser | null>(MOCK_USER);
 
-    const refetch = useCallback(async () => {
-        try {
-            const res = await fetch('/api/auth/me', { credentials: 'include' });
-            if (res.ok) {
-                const data = await res.json();
-                setUser(data.user);
-            } else {
-                setUser(null);
-            }
-        } catch {
-            setUser(null);
-        } finally {
-            setIsLoaded(true);
-        }
-    }, []);
-
-    const signOut = useCallback(async () => {
-        await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-        setUser(null);
-    }, []);
-
-    useEffect(() => {
-        refetch();
-    }, [refetch]);
+    const refetch = useCallback(async () => {}, []);
+    const signOut = useCallback(async () => {}, []);
 
     return (
-        <AuthContext.Provider value={{ user, isSignedIn: !!user, isLoaded, refetch, signOut }}>
+        <AuthContext.Provider value={{ user, isSignedIn: true, isLoaded: true, refetch, signOut }}>
             {children}
         </AuthContext.Provider>
     );
