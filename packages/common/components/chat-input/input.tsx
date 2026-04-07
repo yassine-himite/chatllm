@@ -127,60 +127,59 @@ export const ChatInput = ({
                 >
                     <ImageDropzoneRoot dropzoneProps={dropzonProps}>
                         <div className="flex w-full flex-shrink-0 overflow-hidden rounded-lg">
-                            {editor?.isEditable ? (
-                                <div className="w-full">
-                                    <ImageAttachment />
-                                    <Flex className="flex w-full flex-row items-end gap-0">
-                                        <ChatEditor
-                                            sendMessage={sendMessage}
-                                            editor={editor}
-                                            className="px-3 pt-3"
-                                        />
-                                    </Flex>
-
-                                    <Flex
-                                        className="border-border w-full gap-0 border-t border-dashed px-2 py-2"
-                                        gap="none"
-                                        items="center"
-                                        justify="between"
-                                    >
-                                        {isGenerating && !isChatPage ? (
-                                            <GeneratingStatus />
-                                        ) : (
-                                            <Flex gap="xs" items="center" className="shrink-0">
-                                                <ChatModeButton />
-                                                {/* <AttachmentButton /> */}
-                                                <WebSearchButton />
-                                                {/* <ToolsMenu /> */}
-                                                <ImageUpload
-                                                    id="image-attachment"
-                                                    label="Image"
-                                                    tooltip="Image Attachment"
-                                                    showIcon={true}
-                                                    handleImageUpload={handleImageUpload}
-                                                />
-                                            </Flex>
-                                        )}
-
-                                        <Flex gap="md" items="center">
-                                            <SendStopButton
-                                                isGenerating={isGenerating}
-                                                isChatPage={isChatPage}
-                                                stopGeneration={stopGeneration}
-                                                hasTextInput={hasTextInput}
+                            <div className="w-full">
+                                {editor?.isEditable ? (
+                                    <>
+                                        <ImageAttachment />
+                                        <Flex className="flex w-full flex-row items-end gap-0">
+                                            <ChatEditor
                                                 sendMessage={sendMessage}
+                                                editor={editor}
+                                                className="px-3 pt-3"
                                             />
                                         </Flex>
-                                    </Flex>
-                                </div>
-                            ) : (
-                                <div className="w-full">
-                                    <div className="px-3 pt-3 pb-10 text-sm text-muted-foreground/40">
+                                    </>
+                                ) : (
+                                    <div className="px-3 pt-3 pb-4 text-sm text-muted-foreground/40">
                                         {isFollowUp ? 'Stel een vervolgvraag' : 'Vraag maar raak'}
                                     </div>
-                                    <div className="border-border w-full border-t border-dashed px-2 py-2 h-10" />
-                                </div>
-                            )}
+                                )}
+
+                                <Flex
+                                    className="border-border w-full gap-0 border-t border-dashed px-2 py-2"
+                                    gap="none"
+                                    items="center"
+                                    justify="between"
+                                >
+                                    {isGenerating && !isChatPage ? (
+                                        <GeneratingStatus />
+                                    ) : (
+                                        <Flex gap="xs" items="center" className="shrink-0">
+                                            <ChatModeButton />
+                                            {/* <AttachmentButton /> */}
+                                            <WebSearchButton />
+                                            {/* <ToolsMenu /> */}
+                                            <ImageUpload
+                                                id="image-attachment"
+                                                label="Image"
+                                                tooltip="Image Attachment"
+                                                showIcon={true}
+                                                handleImageUpload={handleImageUpload}
+                                            />
+                                        </Flex>
+                                    )}
+
+                                    <Flex gap="md" items="center">
+                                        <SendStopButton
+                                            isGenerating={isGenerating}
+                                            isChatPage={isChatPage}
+                                            stopGeneration={stopGeneration}
+                                            hasTextInput={hasTextInput}
+                                            sendMessage={sendMessage}
+                                        />
+                                    </Flex>
+                                </Flex>
+                            </div>
                         </div>
                     </ImageDropzoneRoot>
                 </Flex>
