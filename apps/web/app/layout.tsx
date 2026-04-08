@@ -17,6 +17,7 @@ const bricolage = Bricolage_Grotesque({
 import './globals.css';
 
 export const metadata: Metadata = {
+    metadataBase: new URL('https://twelo.ai'),
     title: 'twelo.ai - Dieper gaan met AI-onderzoek en agentische workflows',
     description:
         'Ervaar diepgaand AI-onderzoek met agentische workflows en een breed scala aan modellen voor geavanceerde productiviteit.',

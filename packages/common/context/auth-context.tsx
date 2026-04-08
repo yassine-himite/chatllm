@@ -18,8 +18,8 @@ type AuthContextType = {
 
 const MOCK_USER: AuthUser = {
     id: 'mock-user-1',
-    email: 'yassine@twelo.ai',
-    name: 'Yassine',
+    email: 'user@example.com',
+    name: 'Demo User',
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);

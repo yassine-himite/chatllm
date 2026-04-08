@@ -1,5 +1,4 @@
 import { useAuth, useUser } from '@repo/common/context';
-import { useWorkflowWorker } from '@repo/ai/worker';
 import { ChatMode, ChatModeConfig } from '@repo/shared/config';
 import { ThreadItem } from '@repo/shared/types';
 import { buildCoreMessagesFromThreadItems, plausible } from '@repo/shared/utils';
@@ -121,35 +120,9 @@ export const AgentProvider = ({ children }: { children: ReactNode }) => {
         [threadItemMap, updateThreadItem]
     );
 
-    const { startWorkflow, abortWorkflow } = useWorkflowWorker(
-        useCallback(
-            (data: any) => {
-                if (
-                    data?.threadId &&
-                    data?.threadItemId &&
-                    data.event &&
-                    EVENT_TYPES.includes(data.event)
-                ) {
-                    handleThreadItemUpdate(
-                        data.threadId,
-                        data.threadItemId,
-                        data.event,
-                        data,
-                        data.parentThreadItemId
-                    );
-                }
-
-                if (data.type === 'done') {
-                    setIsGenerating(false);
-                    setTimeout(fetchRemainingCredits, 1000);
-                    if (data?.threadItemId) {
-                        threadItemMap.delete(data.threadItemId);
-                    }
-                }
-            },
-            [handleThreadItemUpdate, setIsGenerating, fetchRemainingCredits, threadItemMap]
-        )
-    );
+    // Workflow worker stubbed out — backend removed, runAgent handles mock responses
+    const startWorkflow = (_: any) => {};
+    const abortWorkflow = () => {};
 
     const runAgent = useCallback(
         async (body: any) => {
@@ -369,7 +342,6 @@ export const AgentProvider = ({ children }: { children: ReactNode }) => {
 
     const updateContext = useCallback(
         (threadId: string, data: any) => {
-            console.info('Updating context', data);
             updateThreadItem(threadId, {
                 id: data.threadItemId,
                 parentId: data.parentThreadItemId,

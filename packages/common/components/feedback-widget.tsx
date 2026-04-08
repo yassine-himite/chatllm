@@ -11,30 +11,19 @@ export const FeedbackWidget = () => {
     const [isSuccess, setIsSuccess] = useState(false);
     const inputRef = useRef<HTMLTextAreaElement>(null);
 
-    const handleSubmit = async () => {
+    const handleSubmit = () => {
         if (!feedback.trim()) return;
 
         setIsSubmitting(true);
-
-        try {
-            await fetch('/api/feedback', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ feedback }),
-            });
+        setTimeout(() => {
             setIsSuccess(true);
             setFeedback('');
-
+            setIsSubmitting(false);
             setTimeout(() => {
                 setIsSuccess(false);
                 setIsOpen(false);
             }, 2000);
-        } catch (error) {
-            console.error('Failed to submit feedback:', error);
-        } finally {
-            setIsSubmitting(false);
-        }
+        }, 400);
     };
 
     if (!userId) {

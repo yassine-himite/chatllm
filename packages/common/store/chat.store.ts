@@ -1,6 +1,6 @@
 'use client';
 
-import { Model, models } from '@repo/ai/models';
+import { Model, models } from './models';
 import { ChatMode } from '@repo/shared/config';
 import { MessageGroup, Thread, ThreadItem } from '@repo/shared/types';
 import Dexie, { Table } from 'dexie';
@@ -229,89 +229,8 @@ declare global {
     }
 }
 
-// Function to initialize the shared worker
-const initializeWorker = () => {
-    if (typeof window === 'undefined') return;
-
-    try {
-        // Create a shared worker
-        dbWorker = new SharedWorker(new URL('./db-sync.worker.ts', import.meta?.url), {
-            type: 'module',
-        });
-
-        // Set up message handler
-        dbWorker.port.onmessage = async event => {
-            const message = event.data;
-
-            if (!message || !message.type) return;
-
-            // Handle different message types
-            switch (message.type) {
-                case 'connected':
-                    break;
-
-                case 'thread-update':
-                    // Refresh threads list
-                    const threads = await db.threads.toArray();
-                    useChatStore.setState({
-                        threads: threads.sort(
-                            (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-                        ),
-                    });
-                    break;
-
-                case 'thread-item-update':
-                    // Refresh thread items if we're on the same thread
-                    const currentThreadId = useChatStore.getState().currentThreadId;
-                    if (message.data?.threadId === currentThreadId) {
-                        await useChatStore.getState().loadThreadItems(message.data.threadId);
-                    }
-                    break;
-
-                case 'thread-delete':
-                    // Handle thread deletion
-                    useChatStore.setState(state => {
-                        const newState = { ...state };
-                        newState.threads = state.threads.filter(
-                            t => t.id !== message.data.threadId
-                        );
-
-                        // Update current thread if the deleted one was active
-                        if (state.currentThreadId === message.data.threadId) {
-                            newState.currentThreadId = newState.threads[0]?.id || null;
-                            newState.currentThread = newState.threads[0] || null;
-                        }
-
-                        return newState;
-                    });
-                    break;
-
-                case 'thread-item-delete':
-                    // Handle thread item deletion
-                    if (message.data?.threadId === useChatStore.getState().currentThreadId) {
-                        useChatStore.setState(state => ({
-                            threadItems: state.threadItems.filter(
-                                item => item.id !== message.data.id
-                            ),
-                        }));
-                    }
-                    break;
-            }
-        };
-
-        // Start the connection
-        dbWorker.port.start();
-
-        // Handle worker errors
-        dbWorker.onerror = err => {
-            console.error('SharedWorker error:', err);
-        };
-    } catch (error) {
-        console.error('Failed to initialize SharedWorker:', error);
-        // Fallback to localStorage method if SharedWorker isn't supported
-        initializeTabSync();
-    }
-};
+// SharedWorker disabled — no backend connected
+const initializeWorker = () => {};
 
 // Function to initialize tab synchronization using localStorage
 const initializeTabSync = () => {
