@@ -9,7 +9,6 @@ export type StepRendererType = {
 };
 
 export const StepRenderer = ({ step }: StepRendererType) => {
-    console.log(step);
     const renderTextStep = () => {
         if (step?.text) {
             return (

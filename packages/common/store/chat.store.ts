@@ -248,7 +248,6 @@ const initializeWorker = () => {
             // Handle different message types
             switch (message.type) {
                 case 'connected':
-                    console.log('Connected to SharedWorker');
                     break;
 
                 case 'thread-update':
@@ -732,16 +731,6 @@ export const useChatStore = create(
             if (!threadId) return;
 
             try {
-                console.log('updateThreadItem', threadItem);
-
-                // // Fetch the existing item
-                // let existingItem: ThreadItem | undefined;
-                // try {
-                //     db.threadItems.get(threadItem.id);
-                // } catch (error) {
-                //     console.warn(`Couldn't fetch existing item ${threadItem.id}:`, error);
-                // }
-
                 const existingItem = get().threadItems.find(t => t.id === threadItem.id);
 
                 // Create or update the item
@@ -765,23 +754,6 @@ export const useChatStore = create(
                     }
                 });
 
-                // // Determine if this is a critical update that should bypass throttling
-                // const isCriticalUpdate =
-                //     !existingItem || // New items
-                //     threadItem.status === 'COMPLETED' || // Final updates
-                //     threadItem.status === 'ERROR' || // Error states
-                //     threadItem.status === 'ABORTED' || // Aborted states
-                //     threadItem.error !== undefined; // Any error information
-
-                // // Always persist final updates - this fixes the issue with missing updates at stream completion
-                // if (
-                //     threadItem.persistToDB === true ||
-                //     isCriticalUpdate ||
-                //     timeSinceLastUpdate > DB_UPDATE_THROTTLE
-                // ) {
-                //     // For critical updates or if enough time has passed, queue for immediate update
-                //     queueThreadItemForUpdate(updatedItem);
-
                 queueThreadItemForUpdate(updatedItem);
 
                 // Notify other tabs about the update
@@ -789,13 +761,6 @@ export const useChatStore = create(
                     threadId,
                     id: threadItem.id,
                 });
-
-                // if (isCriticalUpdate) {
-                //     lastItemUpdateTime[threadItem.id] = now;
-                // }
-                // }
-                // Non-critical updates that are too soon after the last update
-                // won't be persisted yet, but will be in the UI state
             } catch (error) {
                 console.error('Error in updateThreadItem:', error);
 

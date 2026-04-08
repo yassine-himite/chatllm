@@ -11,8 +11,6 @@ export const FollowupSuggestions = ({ suggestions }: { suggestions: string[] }) 
         return null;
     }
 
-    console.log('suggestions', suggestions);
-
     return (
         <div className="border-border my-4 flex flex-col items-start gap-2 border-t border-dashed py-4">
             <div className="text-muted-foreground flex flex-row items-center gap-1.5 py-2 text-xs font-medium">

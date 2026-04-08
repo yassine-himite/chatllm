@@ -218,11 +218,9 @@ export const GeneratingStatus = () => {
 export const ChatModeOptions = ({
     chatMode,
     setChatMode,
-    isRetry = false,
 }: {
     chatMode: ChatMode;
     setChatMode: (chatMode: ChatMode) => void;
-    isRetry?: boolean;
 }) => {
     const { isSignedIn } = useUser();
     const isChatPage = usePathname().startsWith('/chat');

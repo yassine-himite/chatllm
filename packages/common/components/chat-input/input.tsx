@@ -101,8 +101,6 @@ export const ChatInput = ({
         imageAttachment?.base64 && formData.append('imageAttachment', imageAttachment?.base64);
         const threadItems = currentThreadId ? await getThreadItems(currentThreadId.toString()) : [];
 
-        console.log('threadItems', threadItems);
-
         handleSubmit({
             formData,
             newThreadId: threadId,
@@ -156,9 +154,7 @@ export const ChatInput = ({
                                     ) : (
                                         <Flex gap="xs" items="center" className="shrink-0">
                                             <ChatModeButton />
-                                            {/* <AttachmentButton /> */}
                                             <WebSearchButton />
-                                            {/* <ToolsMenu /> */}
                                             <ImageUpload
                                                 id="image-attachment"
                                                 label="Image"
@@ -188,14 +184,7 @@ export const ChatInput = ({
         </>
     );
 
-    const renderChatBottom = () => (
-        <>
-            <Flex items="center" justify="center" gap="sm">
-                {/* <ScrollToBottomButton /> */}
-            </Flex>
-            {renderChatInput()}
-        </>
-    );
+    const renderChatBottom = () => renderChatInput();
 
     useEffect(() => {
         editor?.commands.focus('end');
