@@ -140,7 +140,7 @@ export const ChatInput = ({
                                         </Flex>
                                     </>
                                 ) : (
-                                    <div className="px-3 pt-3 pb-4 text-sm text-muted-foreground/40">
+                                    <div className="min-h-[60px] w-full px-3 pt-3 pb-1 text-base leading-6 text-muted-foreground/50">
                                         {isFollowUp ? 'Stel een vervolgvraag' : 'Vraag maar raak'}
                                     </div>
                                 )}
